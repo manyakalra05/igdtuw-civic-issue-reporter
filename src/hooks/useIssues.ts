@@ -16,9 +16,12 @@ export interface Issue {
   reported_date: string;
   updated_at: string;
   user_id: string | null;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 export const useIssues = () => {
+  // ... keep existing code (state variables and useAuth)
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +39,8 @@ export const useIssues = () => {
         throw error;
       }
 
-      setIssues(data || []);
+      // The data from Supabase already matches our Issue interface
+      setIssues(data as Issue[]);
       setError(null);
     } catch (err: any) {
       console.error('Error fetching issues:', err);
@@ -46,6 +50,7 @@ export const useIssues = () => {
     }
   };
 
+  // ... keep existing code (updateIssueStatus, deleteIssue, getStats, useEffect, and return statement)
   const updateIssueStatus = async (id: string, status: string) => {
     try {
       const { error } = await supabase

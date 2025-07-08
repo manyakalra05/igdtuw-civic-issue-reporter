@@ -85,15 +85,17 @@ const Dashboard = () => {
     "Critical": "bg-red-100 text-red-800"
   };
 
-  // Convert issues to map pins
-  const mapPins = issues.map(issue => ({
-    id: issue.id,
-    lat: 28.6692 + (Math.random() - 0.5) * 0.01, // Random coordinates around campus
-    lng: 77.2265 + (Math.random() - 0.5) * 0.01,
-    title: issue.title,
-    description: issue.description,
-    type: 'issue' as const
-  }));
+  // Convert issues to map pins using actual stored coordinates
+  const mapPins = issues
+    .filter(issue => issue.latitude && issue.longitude) // Only show issues with coordinates
+    .map(issue => ({
+      id: issue.id,
+      lat: issue.latitude!,
+      lng: issue.longitude!,
+      title: issue.title,
+      description: issue.description,
+      type: 'issue' as const
+    }));
 
   if (authLoading || loading) {
     return (
@@ -214,15 +216,25 @@ const Dashboard = () => {
           <Card className="mb-8">
             <CardHeader>
               <CardTitle>Campus Issues Map</CardTitle>
-              <CardDescription>Visual representation of reported issues across campus</CardDescription>
+              <CardDescription>
+                Visual representation of reported issues across campus
+                {mapPins.length === 0 && " (No issues with location data to display)"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <MapComponent pins={mapPins} className="w-full" />
+              {mapPins.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>No issues with location data to display on the map.</p>
+                  <p className="text-sm">Issues reported with map selection will appear here.</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
 
-        {/* Filters */}
+        {/* ... keep existing code (filters and issues list) */}
         <Card className="mb-6">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -316,6 +328,9 @@ const Dashboard = () => {
                         <span className="flex items-center">
                           <MapPin className="h-4 w-4 mr-1" />
                           {issue.location}
+                          {issue.latitude && issue.longitude && (
+                            <span className="ml-1 text-green-600">(📍 Mapped)</span>
+                          )}
                         </span>
                         <span>Category: {issue.category}</span>
                         <span>Reported: {new Date(issue.reported_date).toLocaleDateString()}</span>
