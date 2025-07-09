@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,7 +22,7 @@ const ReportIssue = () => {
     lng: number;
     address: string;
   } | null>(null);
-  
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -32,56 +31,55 @@ const ReportIssue = () => {
     location: "",
     contactEmail: "",
     contactPhone: "",
-    image: null as File | null
+    image: null as File | null,
   });
 
-  // Redirect to auth if not logged in
   useEffect(() => {
     if (!loading && !user) {
-      navigate('/auth');
+      navigate("/auth");
     }
   }, [user, loading, navigate]);
 
   const categories = [
     "Infrastructure & Maintenance",
-    "Safety & Security", 
+    "Safety & Security",
     "WiFi & Technology",
     "Cleanliness & Hygiene",
     "Transportation",
     "Cafeteria & Food Services",
     "Library & Academic Resources",
     "Sports & Recreation",
-    "Other"
+    "Other",
   ];
 
   const priorities = ["Low", "Medium", "High", "Critical"];
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData(prev => ({ ...prev, image: file }));
+      setFormData((prev) => ({ ...prev, image: file }));
     }
   };
 
   const handleLocationSelect = (lat: number, lng: number, address: string) => {
     setSelectedLocation({ lat, lng, address });
-    setFormData(prev => ({ ...prev, location: address }));
+    setFormData((prev) => ({ ...prev, location: address }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast({
         title: "Authentication Required",
         description: "Please sign in to report an issue.",
-        variant: "destructive"
+        variant: "destructive",
       });
-      navigate('/auth');
+      navigate("/auth");
       return;
     }
 
@@ -89,7 +87,7 @@ const ReportIssue = () => {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -98,7 +96,7 @@ const ReportIssue = () => {
 
     try {
       const { data, error } = await supabase
-        .from('issues')
+        .from("issues")
         .insert({
           user_id: user.id,
           title: formData.title,
@@ -110,7 +108,7 @@ const ReportIssue = () => {
           contact_phone: formData.contactPhone,
           latitude: selectedLocation?.lat || null,
           longitude: selectedLocation?.lng || null,
-          status: 'Reported'
+          status: "Reported",
         })
         .select()
         .single();
@@ -123,8 +121,7 @@ const ReportIssue = () => {
         title: "Issue Reported Successfully!",
         description: `Your issue has been submitted and will be reviewed by our team.`,
       });
-      
-      // Reset form
+
       setFormData({
         title: "",
         description: "",
@@ -133,32 +130,28 @@ const ReportIssue = () => {
         location: "",
         contactEmail: "",
         contactPhone: "",
-        image: null
+        image: null,
       });
       setSelectedLocation(null);
-      
-      // Reset file input
-      const fileInput = document.getElementById('image-upload') as HTMLInputElement;
-      if (fileInput) fileInput.value = '';
-      
-      // Navigate to dashboard after a short delay
+
+      const fileInput = document.getElementById("image-upload") as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
+
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }, 2000);
-      
     } catch (error: any) {
-      console.error('Error submitting issue:', error);
+      console.error("Error submitting issue:", error);
       toast({
         title: "Error Submitting Issue",
         description: error.message || "There was an error submitting your issue. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Show loading state while checking authentication
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
@@ -172,198 +165,191 @@ const ReportIssue = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">Report a Campus Issue</h1>
-          <p className="text-gray-600 mt-2">Help us improve IGDTUW by reporting any issues you encounter on campus.</p>
+          <p className="text-gray-600 mt-2">
+            Help us improve IGDTUW by reporting any issues you encounter on campus.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Map Section */}
-          <Card className="animate-fade-in">
-            <CardHeader>
-              <CardTitle>Select Location on Map</CardTitle>
-              <CardDescription>
-                Click on the map to pinpoint the exact location of the issue.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <MapComponent
-                onLocationSelect={handleLocationSelect}
-                className="w-full"
-              />
-              {selectedLocation && (
-                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center text-green-700">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    <span className="text-sm font-medium">Location Selected</span>
-                  </div>
-                  <p className="text-sm text-green-600 mt-1">{selectedLocation.address}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Form Section */}
-          <Card className="animate-fade-in">
-            <CardHeader>
-              <CardTitle>Issue Details</CardTitle>
-              <CardDescription>
-                Please provide as much detail as possible to help us address your concern effectively.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                
-                <div className="space-y-2">
-                  <Label htmlFor="title">Issue Title *</Label>
-                  <Input
-                    id="title"
-                    placeholder="Brief description of the issue"
-                    value={formData.title}
-                    onChange={(e) => handleInputChange("title", e.target.value)}
-                    required
-                  />
-                </div>
-
-                
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category *</Label>
-                  <Select onValueChange={(value) => handleInputChange("category", value)} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select issue category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                
-                <div className="space-y-2">
-                  <Label htmlFor="priority">Priority *</Label>
-                  <Select onValueChange={(value) => handleInputChange("priority", value)} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select priority level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {priorities.map((priority) => (
-                        <SelectItem key={priority} value={priority}>
-                          {priority}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location Description</Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="location"
-                      placeholder="e.g., Block A, 2nd Floor, Room 205"
-                      className="pl-10"
-                      value={formData.location}
-                      onChange={(e) => handleInputChange("location", e.target.value)}
+        {/* Responsive Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Map */}
+          <div>
+            <Card className="animate-fade-in">
+              <CardHeader>
+                <CardTitle>Select Location on Map</CardTitle>
+                <CardDescription>
+                  Click on the map to pinpoint the exact location of the issue.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <div className="min-w-[700px] mx-auto">
+                    <MapComponent
+                      onLocationSelect={handleLocationSelect}
+                      className="w-full h-[400px] rounded-lg"
                     />
                   </div>
-                  <p className="text-sm text-gray-500">
-                    Location will be auto-filled when you select on the map, or you can type manually.
-                  </p>
                 </div>
+                {selectedLocation && (
+                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center text-green-700">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      <span className="text-sm font-medium">Location Selected</span>
+                    </div>
+                    <p className="text-sm text-green-600 mt-1">{selectedLocation.address}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
-                
-                <div className="space-y-2">
-                  <Label htmlFor="description">Detailed Description *</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Please describe the issue in detail..."
-                    rows={4}
-                    value={formData.description}
-                    onChange={(e) => handleInputChange("description", e.target.value)}
-                    required
-                  />
-                </div>
+          {/* Form */}
+          <div>
+            <Card className="animate-fade-in">
+              <CardHeader>
+                <CardTitle>Issue Details</CardTitle>
+                <CardDescription>
+                  Please provide as much detail as possible to help us address your concern effectively.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Issue Title *</Label>
+                    <Input
+                      id="title"
+                      placeholder="Brief description of the issue"
+                      value={formData.title}
+                      onChange={(e) => handleInputChange("title", e.target.value)}
+                      required
+                    />
+                  </div>
 
-                
-                <div className="space-y-2">
-                  <Label htmlFor="image-upload">Upload Photo (Optional)</Label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                    <div className="mt-4">
-                      <label htmlFor="image-upload" className="cursor-pointer">
-                        <span className="mt-2 block text-sm font-medium text-gray-900">
-                          Click to upload or drag and drop
-                        </span>
-                        <span className="mt-1 block text-sm text-gray-500">
-                          PNG, JPG, GIF up to 10MB
-                        </span>
-                      </label>
-                      <input
-                        id="image-upload"
-                        type="file"
-                        className="sr-only"
-                        accept="image/*"
-                        onChange={handleImageUpload}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="category">Category *</Label>
+                      <Select onValueChange={(value) => handleInputChange("category", value)} required>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category} value={category}>
+                              {category}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="priority">Priority *</Label>
+                      <Select onValueChange={(value) => handleInputChange("priority", value)} required>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {priorities.map((priority) => (
+                            <SelectItem key={priority} value={priority}>
+                              {priority}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Location Description</Label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="location"
+                        placeholder="e.g., Block A, 2nd Floor, Room 205"
+                        className="pl-10"
+                        value={formData.location}
+                        onChange={(e) => handleInputChange("location", e.target.value)}
                       />
                     </div>
-                    {formData.image && (
-                      <p className="mt-2 text-sm text-green-600">
-                        Selected: {formData.image.name}
-                      </p>
-                    )}
+                    <p className="text-xs text-gray-500">
+                      Auto-filled when you select on map, or type manually.
+                    </p>
                   </div>
-                </div>
 
-                
-                <div className="space-y-2">
-                  <Label htmlFor="contactEmail">Contact Email (Optional)</Label>
-                  <Input
-                    id="contactEmail"
-                    type="email"
-                    placeholder="your.email@igdtuw.ac.in"
-                    value={formData.contactEmail}
-                    onChange={(e) => handleInputChange("contactEmail", e.target.value)}
-                  />
-                  <p className="text-sm text-gray-500">
-                    Defaults to your account email if not provided.
-                  </p>
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Detailed Description *</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Please describe the issue in detail..."
+                      rows={3}
+                      value={formData.description}
+                      onChange={(e) => handleInputChange("description", e.target.value)}
+                      required
+                    />
+                  </div>
 
-                
-                <div className="space-y-2">
-                  <Label htmlFor="contactPhone">Contact Phone (Optional)</Label>
-                  <Input
-                    id="contactPhone"
-                    type="tel"
-                    placeholder="+91 98765 43210"
-                    value={formData.contactPhone}
-                    onChange={(e) => handleInputChange("contactPhone", e.target.value)}
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="image-upload">Upload Photo (Optional)</Label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
+                      <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                      <div className="mt-2">
+                        <label htmlFor="image-upload" className="cursor-pointer">
+                          <span className="text-sm font-medium text-gray-900">Click to upload</span>
+                          <span className="block text-xs text-gray-500 mt-1">
+                            PNG, JPG, GIF up to 10MB
+                          </span>
+                        </label>
+                        <input
+                          id="image-upload"
+                          type="file"
+                          className="sr-only"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                        />
+                      </div>
+                      {formData.image && (
+                        <p className="mt-2 text-sm text-green-600">Selected: {formData.image.name}</p>
+                      )}
+                    </div>
+                  </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full" 
-                  size="lg" 
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Submitting..." : "Submit Issue Report"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="contactEmail">Contact Email</Label>
+                      <Input
+                        id="contactEmail"
+                        type="email"
+                        placeholder="your.email@igdtuw.ac.in"
+                        value={formData.contactEmail}
+                        onChange={(e) => handleInputChange("contactEmail", e.target.value)}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPhone">Contact Phone</Label>
+                      <Input
+                        id="contactPhone"
+                        type="tel"
+                        placeholder="+91 98765 43210"
+                        value={formData.contactPhone}
+                        onChange={(e) => handleInputChange("contactPhone", e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+                    {isSubmitting ? "Submitting..." : "Submit Issue Report"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

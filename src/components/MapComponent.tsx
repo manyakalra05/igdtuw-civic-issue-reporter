@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { MapPin, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -109,7 +110,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
       </div>
 
       <div 
-        className="relative w-full h-96 bg-gradient-to-br from-green-50 to-yellow-50 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden cursor-pointer"
+        className="relative w-full h-[500px] bg-gradient-to-br from-green-50 to-yellow-50 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden cursor-pointer"
         onClick={handleMapClick}
         style={{
           backgroundImage: `
@@ -118,9 +119,9 @@ const MapComponent: React.FC<MapComponentProps> = ({
         }}
       >
         {/* Campus Buildings Layout */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 p-6">
           {/* Admin Block - Top Left */}
-          <div className="absolute top-4 left-4 w-28 h-20 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-xs font-bold border border-yellow-300">
+          <div className="absolute top-6 left-6 w-32 h-24 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-sm font-bold border border-yellow-300">
             <div className="text-center">
               <div>ADMIN</div>
               <div>BLOCK</div>
@@ -128,7 +129,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </div>
 
           {/* IT Block - Top Right */}
-          <div className="absolute top-4 right-4 w-28 h-20 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-xs font-bold border border-yellow-300">
+          <div className="absolute top-6 right-6 w-32 h-24 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-sm font-bold border border-yellow-300">
             <div className="text-center">
               <div>IT</div>
               <div>BLOCK</div>
@@ -136,7 +137,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </div>
 
           {/* Mae Block - Left Side */}
-          <div className="absolute top-1/2 left-4 transform -translate-y-1/2 w-28 h-20 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-xs font-bold border border-yellow-300">
+          <div className="absolute top-1/2 left-6 transform -translate-y-1/2 w-32 h-24 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-sm font-bold border border-yellow-300">
             <div className="text-center">
               <div>MAE</div>
               <div>BLOCK</div>
@@ -144,7 +145,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </div>
 
           {/* ECE/CSE Block - Right Side */}
-          <div className="absolute top-1/2 right-4 transform -translate-y-1/2 w-28 h-20 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-xs font-bold border border-yellow-300">
+          <div className="absolute top-1/2 right-6 transform -translate-y-1/2 w-32 h-24 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-sm font-bold border border-yellow-300">
             <div className="text-center">
               <div>ECE/CSE</div>
               <div>BLOCK</div>
@@ -152,24 +153,24 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </div>
 
           {/* Computer Centre Library - Top Center */}
-          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-36 h-12 bg-gray-300 rounded shadow-sm flex items-center justify-center text-xs font-bold text-center">
+          <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-40 h-16 bg-gray-300 rounded shadow-sm flex items-center justify-center text-sm font-bold text-center">
             COMPUTER CENTRE-LIBRARY
           </div>
 
           {/* Central Main Ground - Much Larger */}
-          <div className="absolute top-24 left-1/2 transform -translate-x-1/2 w-64 h-48 bg-green-200 rounded shadow-sm flex items-center justify-center text-lg font-bold border border-green-300 z-10">
+          <div className="absolute top-28 left-1/2 transform -translate-x-1/2 w-72 h-56 bg-green-200 rounded shadow-sm flex items-center justify-center text-xl font-bold border border-green-300 z-10">
             <div className="text-center">
               <div>MAIN GROUND</div>
             </div>
           </div>
 
           {/* Auditorium - Bottom Center, overlapping with main ground */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-48 h-24 bg-purple-200 rounded shadow-sm flex items-center justify-center text-sm font-bold border border-purple-300 z-20">
+          <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-52 h-28 bg-purple-200 rounded shadow-sm flex items-center justify-center text-lg font-bold border border-purple-300 z-20">
             AUDITORIUM
           </div>
 
           {/* Kaveri Hostel - Bottom Left */}
-          <div className="absolute bottom-4 left-4 w-28 h-20 bg-blue-200 rounded shadow-sm flex items-center justify-center text-xs font-bold border border-blue-300">
+          <div className="absolute bottom-6 left-6 w-32 h-24 bg-blue-200 rounded shadow-sm flex items-center justify-center text-sm font-bold border border-blue-300">
             <div className="text-center">
               <div>KAVERI</div>
               <div>HOSTEL</div>
@@ -177,15 +178,12 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </div>
 
           {/* Krishna Hostel - Bottom Right */}
-          <div className="absolute bottom-4 right-4 w-28 h-20 bg-blue-200 rounded shadow-sm flex items-center justify-center text-xs font-bold border border-blue-300">
+          <div className="absolute bottom-6 right-6 w-32 h-24 bg-blue-200 rounded shadow-sm flex items-center justify-center text-sm font-bold border border-blue-300">
             <div className="text-center">
               <div>KRISHNA</div>
               <div>HOSTEL</div>
             </div>
           </div>
-
-          {/* Entry Gate - Bottom */}
-          
         </div>
 
         {/* Map Pins */}
@@ -204,10 +202,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 setSelectedPin(pin);
               }}
             >
-              <div className={`w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center ${
+              <div className={`w-8 h-8 rounded-full border-2 border-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform ${
                 pin.type === 'issue' ? 'bg-red-500' : 'bg-blue-500'
               }`}>
-                <MapPin className="h-3 w-3 text-white" />
+                <MapPin className="h-4 w-4 text-white" />
               </div>
             </div>
           );
@@ -216,14 +214,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
         {/* Click position indicator */}
         {isAddingPin && clickPosition && (
           <div
-            className="absolute transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-yellow-500 rounded-full border-2 border-white shadow-lg animate-pulse z-30"
+            className="absolute transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-yellow-500 rounded-full border-2 border-white shadow-lg animate-pulse z-30"
             style={{ left: `${clickPosition.x}%`, top: `${clickPosition.y}%` }}
           />
         )}
 
         {/* Instructions */}
-        <div className="absolute top-0.05 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs text-gray-600 z-40">
-          {isAddingPin ? "Click anywhere to place a pin" : "IGDTUW Campus Map"}
+        <div className="absolute top-0.0005 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-sm text-gray-600 z-40 font-medium">
+          {isAddingPin ? "📍 Click anywhere to place a pin" : "🏫 IGDTUW Campus Map"}
         </div>
       </div>
 
