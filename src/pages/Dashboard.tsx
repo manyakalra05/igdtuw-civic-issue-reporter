@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,33 +5,63 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Search, Filter, Eye, Edit, Trash2, Users, AlertTriangle, CheckCircle, Clock, MapPin } from "lucide-react";
+import { ArrowLeft, Search, Eye, Trash2, Users, AlertTriangle, CheckCircle, Clock, MapPin, ThumbsUp, MessageSquare, Shield } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAdmin } from "@/contexts/AdminContext";
 import { useIssues } from "@/hooks/useIssues";
+import { IssueDetailsModal } from "@/components/IssueDetailsModal";
 import MapComponent from "@/components/MapComponent";
 
 const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
-  const { issues, loading, error, updateIssueStatus, deleteIssue, getStats } = useIssues();
+  const { isAdmin, adminLogout } = useAdmin();
+  const { issues, loading, error, updateIssueStatus, deleteIssue, getStats, toggleUpvote, checkUserUpvote } = useIssues();
   
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [showMap, setShowMap] = useState(false);
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [userUpvotes, setUserUpvotes] = useState<Set<string>>(new Set());
 
-  // Redirect to auth if not logged in
+  // Redirect to auth if not logged in and not admin
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (!authLoading && !user && !isAdmin) {
       navigate('/auth');
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, isAdmin, navigate]);
+
+  // Load user upvotes
+  useEffect(() => {
+    const loadUserUpvotes = async () => {
+      if (!user) return;
+      
+      const upvotedIssues = new Set<string>();
+      for (const issue of issues) {
+        const hasUpvoted = await checkUserUpvote(issue.id);
+        if (hasUpvoted) {
+          upvotedIssues.add(issue.id);
+        }
+      }
+      setUserUpvotes(upvotedIssues);
+    };
+
+    if (issues.length > 0) {
+      loadUserUpvotes();
+    }
+  }, [issues, user, checkUserUpvote]);
 
   const handleSignOut = async () => {
-    await signOut();
+    if (isAdmin) {
+      adminLogout();
+    }
+    if (user) {
+      await signOut();
+    }
     navigate('/');
   };
 
@@ -50,6 +79,44 @@ const Dashboard = () => {
       toast({
         title: "Issue Deleted",
         description: "The issue has been deleted successfully.",
+      });
+    }
+  };
+
+  const handleUpvote = async (issueId: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to upvote issues.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      await toggleUpvote(issueId);
+      
+      // Update local upvote state
+      const newUpvotes = new Set(userUpvotes);
+      if (userUpvotes.has(issueId)) {
+        newUpvotes.delete(issueId);
+        toast({
+          title: "Upvote Removed",
+          description: "You removed your upvote from this issue.",
+        });
+      } else {
+        newUpvotes.add(issueId);
+        toast({
+          title: "Issue Upvoted",
+          description: "You upvoted this issue to increase its visibility.",
+        });
+      }
+      setUserUpvotes(newUpvotes);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update upvote. Please try again.",
+        variant: "destructive"
       });
     }
   };
@@ -87,7 +154,7 @@ const Dashboard = () => {
 
   // Convert issues to map pins using actual stored coordinates
   const mapPins = issues
-    .filter(issue => issue.latitude && issue.longitude) // Only show issues with coordinates
+    .filter(issue => issue.latitude && issue.longitude)
     .map(issue => ({
       id: issue.id,
       lat: issue.latitude!,
@@ -138,8 +205,17 @@ const Dashboard = () => {
               <h1 className="text-2xl font-bold text-gray-900">Issues Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.email}</span>
-              <Button variant="outline" onClick={handleSignOut}>Sign Out</Button>
+              {isAdmin && (
+                <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-200">
+                  <Shield className="h-3 w-3 mr-1" />
+                  Admin Mode
+                </Badge>
+              )}
+              {user && <span className="text-sm text-gray-600">Welcome, {user.email}</span>}
+              {isAdmin && !user && <span className="text-sm text-gray-600">College Administration</span>}
+              <Button variant="outline" onClick={handleSignOut}>
+                {isAdmin ? "Exit Admin" : "Sign Out"}
+              </Button>
             </div>
           </div>
         </div>
@@ -234,7 +310,7 @@ const Dashboard = () => {
           </Card>
         )}
 
-        {/* ... keep existing code (filters and issues list) */}
+        {/* Filters */}
         <Card className="mb-6">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -324,7 +400,7 @@ const Dashboard = () => {
                       
                       <p className="text-gray-600 mb-3">{issue.description}</p>
                       
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-3">
                         <span className="flex items-center">
                           <MapPin className="h-4 w-4 mr-1" />
                           {issue.location}
@@ -338,26 +414,54 @@ const Dashboard = () => {
                           <span>Contact: {issue.contact_email}</span>
                         )}
                       </div>
+
+                      {/* Community Actions */}
+                      <div className="flex items-center space-x-4">
+                        <Button
+                          variant={userUpvotes.has(issue.id) ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleUpvote(issue.id)}
+                          className="flex items-center space-x-1"
+                          disabled={!user && !isAdmin}
+                        >
+                          <ThumbsUp className={`h-4 w-4 ${userUpvotes.has(issue.id) ? 'fill-current' : ''}`} />
+                          <span>{issue.upvote_count || 0}</span>
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedIssue(issue)}
+                          className="flex items-center space-x-1"
+                        >
+                          <Eye className="h-4 w-4" />
+                          <span>View Details</span>
+                        </Button>
+                      </div>
                     </div>
                     
                     <div className="flex items-center gap-2 ml-4">
-                      <Select
-                        value={issue.status}
-                        onValueChange={(value) => handleStatusUpdate(issue.id, value)}
-                      >
-                        <SelectTrigger className="w-40">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Reported">Reported</SelectItem>
-                          <SelectItem value="Under Review">Under Review</SelectItem>
-                          <SelectItem value="Assigned">Assigned</SelectItem>
-                          <SelectItem value="In Progress">In Progress</SelectItem>
-                          <SelectItem value="Resolved">Resolved</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      {/* Show status update dropdown for admin or issue owner */}
+                      {(isAdmin || (user && user.id === issue.user_id)) && (
+                        <Select
+                          value={issue.status}
+                          onValueChange={(value) => handleStatusUpdate(issue.id, value)}
+                        >
+                          <SelectTrigger className="w-40">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Reported">Reported</SelectItem>
+                            <SelectItem value="Under Review">Under Review</SelectItem>
+                            <SelectItem value="Assigned">Assigned</SelectItem>
+                            <SelectItem value="In Progress">In Progress</SelectItem>
+                            <SelectItem value="Resolved">Resolved</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
                       
-                      {user?.id === issue.user_id && (
+                      {/* Show delete button for admin or issue owner */}
+                      {(isAdmin || (user && user.id === issue.user_id)) && (
                         <Button
                           variant="outline"
                           size="icon"
@@ -374,8 +478,19 @@ const Dashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Issue Details Modal */}
+      <IssueDetailsModal
+        issue={selectedIssue}
+        open={!!selectedIssue}
+        onOpenChange={(open) => {
+          if (!open) setSelectedIssue(null);
+        }}
+        isAdmin={isAdmin}
+      />
     </div>
   );
 };
 
 export default Dashboard;
+  
