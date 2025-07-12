@@ -99,7 +99,7 @@ const Index = () => {
             </div>
             <div className="lg:w-1/2">
               <img
-                src="public/igdtuw.jpeg"
+                src="/igdtuw.jpeg"
                 alt="Campus Illustration"
                 className="w-full rounded-lg shadow-lg"
               />
