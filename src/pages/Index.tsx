@@ -78,8 +78,30 @@ const Index = () => {
           <div className="lg:flex lg:items-center">
             <div className="lg:w-1/2 mb-10 lg:mb-0">
               <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white sm:text-4xl lg:text-5xl leading-tight">
-                Report, Resolve, <br />
-                Improve Our Campus
+                <span className="inline-block transform hover:scale-105 transition-transform duration-300">
+                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                    Report
+                  </span>
+                </span>
+                <span className="text-slate-700 dark:text-slate-300">, </span>
+                <span className="inline-block transform hover:scale-105 transition-transform duration-300 delay-100">
+                  <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                    Resolve
+                  </span>
+                </span>
+                <span className="text-slate-700 dark:text-slate-300">, </span>
+                <br />
+                <span className="inline-block transform hover:scale-105 transition-transform duration-300 delay-200">
+                  <span className="bg-gradient-to-r from-orange-600 via-pink-600 to-red-600 bg-clip-text text-transparent">
+                    Improve
+                  </span>
+                </span>
+                <span className="text-slate-700 dark:text-slate-300"> Our </span>
+                <span className="inline-block transform hover:scale-105 transition-transform duration-300 delay-300">
+                  <span className="bg-gradient-to-r from-purple-600 via-violet-600 to-blue-600 bg-clip-text text-transparent font-black">
+                    Campus
+                  </span>
+                </span>
               </h2>
               <p className="mt-4 text-slate-700 dark:text-slate-300 text-lg">
                 Be a part of the change. Report issues, track progress, and contribute to a better campus environment for everyone.
@@ -98,11 +120,21 @@ const Index = () => {
               </div>
             </div>
             <div className="lg:w-1/2">
-              <img
-                src="public/igdtuw.jpeg"
-                alt="Campus Illustration"
-                className="w-full rounded-lg shadow-lg"
-              />
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative">
+                  <img
+                    src="/igdtuw.jpeg"
+                    alt="Campus Illustration"
+                    className="w-full rounded-xl shadow-2xl transform transition duration-500 hover:scale-105 hover:rotate-1 border-4 border-white/20 backdrop-blur-sm"
+                    style={{
+                      filter: 'brightness(1.1) contrast(1.05) saturate(1.1)',
+                      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                    }}
+                  />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/10 via-transparent to-white/10 pointer-events-none"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
