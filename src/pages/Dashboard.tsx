@@ -405,7 +405,7 @@ const Dashboard = () => {
                           <MapPin className="h-4 w-4 mr-1" />
                           {issue.location}
                           {issue.latitude && issue.longitude && (
-                            <span className="ml-1 text-green-600">(📍 Mapped)</span>
+                            <span className="ml-1 text-green-600">(📍Mapped)</span>
                           )}
                         </span>
                         <span>Category: {issue.category}</span>
@@ -442,7 +442,7 @@ const Dashboard = () => {
                     
                     <div className="flex items-center gap-2 ml-4">
                       {/* Show status update dropdown for admin or issue owner */}
-                      {(isAdmin || (user && user.id === issue.user_id)) && (
+                      {(!isAdmin && (user && user.id === issue.user_id)) && (
                         <Select
                           value={issue.status}
                           onValueChange={(value) => handleStatusUpdate(issue.id, value)}
