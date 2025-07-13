@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +15,8 @@ import { IssueDetailsModal } from "@/components/IssueDetailsModal";
 import MapComponent from "@/components/MapComponent";
 
 const Dashboard = () => {
+  // ... keep existing code (state declarations and effects)
+
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
@@ -222,7 +225,8 @@ const Dashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
+        {/* ... keep existing code (Stats Cards) */}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
@@ -287,7 +291,8 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        {/* Map */}
+        {/* ... keep existing code (Map section) */}
+
         {showMap && (
           <Card className="mb-8">
             <CardHeader>
@@ -310,7 +315,8 @@ const Dashboard = () => {
           </Card>
         )}
 
-        {/* Filters */}
+        {/* ... keep existing code (Filters section) */}
+
         <Card className="mb-6">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -441,7 +447,7 @@ const Dashboard = () => {
                     </div>
                     
                     <div className="flex items-center gap-2 ml-4">
-                      {/* Show status update dropdown for admin or issue owner */}
+                      {/* Show status update dropdown only for regular users who own the issue */}
                       {(!isAdmin && user && user.id === issue.user_id) && (
                         <Select
                           value={issue.status}
@@ -460,8 +466,8 @@ const Dashboard = () => {
                         </Select>
                       )}
                       
-                      {/* Show delete button for admin or issue owner */}
-                      {(isAdmin || (user && user.id === issue.user_id)) && (
+                      {/* Show delete button only for regular users who own the issue, NOT for admins */}
+                      {(!isAdmin && user && user.id === issue.user_id) && (
                         <Button
                           variant="outline"
                           size="icon"
@@ -493,4 +499,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-  
