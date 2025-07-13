@@ -442,7 +442,7 @@ const Dashboard = () => {
                     
                     <div className="flex items-center gap-2 ml-4">
                       {/* Show status update dropdown for admin or issue owner */}
-                      {(!isAdmin && (user && user.id === issue.user_id)) && (
+                      {(!isAdmin && user && user.id === issue.user_id) && (
                         <Select
                           value={issue.status}
                           onValueChange={(value) => handleStatusUpdate(issue.id, value)}
