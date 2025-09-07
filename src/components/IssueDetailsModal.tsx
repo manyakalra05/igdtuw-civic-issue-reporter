@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Calendar, Clock, User, MessageSquare, Shield, History } from "lucide-react";
+import { MapPin, Calendar, Clock, User, MessageSquare, Shield, History, Image as ImageIcon, ExternalLink } from "lucide-react";
 import { Issue, IssueResponse, StatusHistory, useIssues } from "@/hooks/useIssues";
 import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
@@ -159,6 +159,12 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
               <Badge className={priorityColors[issue.priority as keyof typeof priorityColors] || "bg-gray-100 text-gray-800"}>
                 {issue.priority}
               </Badge>
+              {issue.image_url && (
+                <Badge variant="outline" className="text-xs">
+                  <ImageIcon className="h-3 w-3 mr-1" />
+                  Has Image
+                </Badge>
+              )}
             </div>
           </div>
         </DialogHeader>
@@ -173,6 +179,35 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Image Display */}
+              {issue.image_url && (
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-sm font-medium text-gray-900 flex items-center">
+                      <ImageIcon className="h-4 w-4 mr-2" />
+                      Attached Image
+                    </h4>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open(issue.image_url!, '_blank')}
+                      className="flex items-center"
+                    >
+                      <ExternalLink className="h-3 w-3 mr-1" />
+                      Open Full Size
+                    </Button>
+                  </div>
+                  <div className="text-center">
+                    <img
+                      src={issue.image_url}
+                      alt="Issue attachment"
+                      className="max-w-full max-h-80 rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={() => window.open(issue.image_url!, '_blank')}
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center text-sm text-gray-600">
                   <MapPin className="h-4 w-4 mr-2" />

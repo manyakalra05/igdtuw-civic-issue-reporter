@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Upload, MapPin } from "lucide-react";
+import { ArrowLeft, Upload, MapPin, X, Image as ImageIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +17,7 @@ const ReportIssue = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
     lng: number;
@@ -61,13 +62,78 @@ const ReportIssue = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please select an image smaller than 10MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please select an image file (PNG, JPG, GIF).",
+          variant: "destructive",
+        });
+        return;
+      }
+
       setFormData((prev) => ({ ...prev, image: file }));
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData((prev) => ({ ...prev, image: null }));
+    setImagePreview(null);
+    const fileInput = document.getElementById("image-upload") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
   };
 
   const handleLocationSelect = (lat: number, lng: number, address: string) => {
     setSelectedLocation({ lat, lng, address });
     setFormData((prev) => ({ ...prev, location: address }));
+  };
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user?.id}-${Date.now()}.${fileExt}`;
+      const filePath = `issue-images/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('issue-images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('issue-images')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Image Upload Failed",
+        description: "Failed to upload image. The issue will be submitted without the image.",
+        variant: "destructive",
+      });
+      return null;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,6 +161,17 @@ const ReportIssue = () => {
     setIsSubmitting(true);
 
     try {
+      let imageUrl: string | null = null;
+
+      // Upload image if present
+      if (formData.image) {
+        toast({
+          title: "Uploading Image...",
+          description: "Please wait while we upload your image.",
+        });
+        imageUrl = await uploadImage(formData.image);
+      }
+
       const { data, error } = await supabase
         .from("issues")
         .insert({
@@ -108,6 +185,7 @@ const ReportIssue = () => {
           contact_phone: formData.contactPhone,
           latitude: selectedLocation?.lat || null,
           longitude: selectedLocation?.lng || null,
+          image_url: imageUrl,
           status: "Reported",
         })
         .select()
@@ -122,6 +200,7 @@ const ReportIssue = () => {
         description: `Your issue has been submitted and will be reviewed by our team.`,
       });
 
+      // Reset form
       setFormData({
         title: "",
         description: "",
@@ -133,6 +212,7 @@ const ReportIssue = () => {
         image: null,
       });
       setSelectedLocation(null);
+      setImagePreview(null);
 
       const fileInput = document.getElementById("image-upload") as HTMLInputElement;
       if (fileInput) fileInput.value = "";
@@ -296,15 +376,54 @@ const ReportIssue = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="image-upload">Upload Photo (Optional)</Label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
-                      <Upload className="mx-auto h-8 w-8 text-gray-400" />
-                      <div className="mt-2">
-                        <label htmlFor="image-upload" className="cursor-pointer">
-                          <span className="text-sm font-medium text-gray-900">Click to upload</span>
-                          <span className="block text-xs text-gray-500 mt-1">
-                            PNG, JPG, GIF up to 10MB
-                          </span>
-                        </label>
+                    {!imagePreview ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
+                        <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                        <div className="mt-2">
+                          <label htmlFor="image-upload" className="cursor-pointer">
+                            <span className="text-sm font-medium text-gray-900">Click to upload</span>
+                            <span className="block text-xs text-gray-500 mt-1">
+                              PNG, JPG, GIF up to 10MB
+                            </span>
+                          </label>
+                          <input
+                            id="image-upload"
+                            type="file"
+                            className="sr-only"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative border rounded-lg overflow-hidden">
+                        <img
+                          src={imagePreview}
+                          alt="Issue preview"
+                          className="w-full h-48 object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => document.getElementById("image-upload")?.click()}
+                            >
+                              <ImageIcon className="h-4 w-4 mr-2" />
+                              Change
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              onClick={handleRemoveImage}
+                            >
+                              <X className="h-4 w-4 mr-2" />
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
                         <input
                           id="image-upload"
                           type="file"
@@ -313,10 +432,13 @@ const ReportIssue = () => {
                           onChange={handleImageUpload}
                         />
                       </div>
-                      {formData.image && (
-                        <p className="mt-2 text-sm text-green-600">Selected: {formData.image.name}</p>
-                      )}
-                    </div>
+                    )}
+                    {formData.image && (
+                      <div className="flex items-center text-sm text-green-600 mt-2">
+                        <ImageIcon className="h-4 w-4 mr-2" />
+                        <span>{formData.image.name} ({(formData.image.size / 1024 / 1024).toFixed(2)} MB)</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

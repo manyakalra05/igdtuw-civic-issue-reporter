@@ -18,6 +18,7 @@ export interface Issue {
   latitude: number | null;
   longitude: number | null;
   upvote_count: number;
+  image_url: string | null;
 }
 
 export interface IssueResponse {

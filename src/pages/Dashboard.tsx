@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Search, Eye, Trash2, Users, AlertTriangle, CheckCircle, Clock, MapPin, ThumbsUp, MessageSquare, Shield } from "lucide-react";
+import { ArrowLeft, Search, Eye, Trash2, Users, AlertTriangle, CheckCircle, Clock, MapPin, ThumbsUp, MessageSquare, Shield, Image as ImageIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdmin } from "@/contexts/AdminContext";
@@ -15,8 +14,6 @@ import { IssueDetailsModal } from "@/components/IssueDetailsModal";
 import MapComponent from "@/components/MapComponent";
 
 const Dashboard = () => {
-  // ... keep existing code (state declarations and effects)
-
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
@@ -225,8 +222,7 @@ const Dashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* ... keep existing code (Stats Cards) */}
-
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
@@ -291,8 +287,7 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        {/* ... keep existing code (Map section) */}
-
+        {/* Map Section */}
         {showMap && (
           <Card className="mb-8">
             <CardHeader>
@@ -315,8 +310,7 @@ const Dashboard = () => {
           </Card>
         )}
 
-        {/* ... keep existing code (Filters section) */}
-
+        {/* Filters */}
         <Card className="mb-6">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -392,9 +386,10 @@ const Dashboard = () => {
             filteredIssues.map((issue) => (
               <Card key={issue.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-start gap-6">
+                    {/* Left side - Main content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-2 flex-wrap">
                         <h3 className="text-lg font-semibold text-gray-900">{issue.title}</h3>
                         <Badge className={statusColors[issue.status as keyof typeof statusColors] || "bg-gray-100 text-gray-800"}>
                           {issue.status}
@@ -402,6 +397,12 @@ const Dashboard = () => {
                         <Badge className={priorityColors[issue.priority as keyof typeof priorityColors] || "bg-gray-100 text-gray-800"}>
                           {issue.priority}
                         </Badge>
+                        {issue.image_url && (
+                          <Badge variant="outline" className="text-xs">
+                            <ImageIcon className="h-3 w-3 mr-1" />
+                            Image
+                          </Badge>
+                        )}
                       </div>
                       
                       <p className="text-gray-600 mb-3">{issue.description}</p>
@@ -446,35 +447,51 @@ const Dashboard = () => {
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-2 ml-4">
-                      {/* Show status update dropdown only for regular users who own the issue */}
-                      {(!isAdmin && user && user.id === issue.user_id) && (
-                        <Select
-                          value={issue.status}
-                          onValueChange={(value) => handleStatusUpdate(issue.id, value)}
-                        >
-                          <SelectTrigger className="w-40">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Reported">Reported</SelectItem>
-                            <SelectItem value="Under Review">Under Review</SelectItem>
-                            <SelectItem value="Assigned">Assigned</SelectItem>
-                            <SelectItem value="In Progress">In Progress</SelectItem>
-                            <SelectItem value="Resolved">Resolved</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
+                    {/* Right side - Actions and Image */}
+                    <div className="flex flex-col items-end gap-4">
+                      {/* Action buttons */}
+                      <div className="flex items-center gap-2">
+                        {/* Show status update dropdown only for regular users who own the issue */}
+                        {(!isAdmin && user && user.id === issue.user_id) && (
+                          <Select
+                            value={issue.status}
+                            onValueChange={(value) => handleStatusUpdate(issue.id, value)}
+                          >
+                            <SelectTrigger className="w-40">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Reported">Reported</SelectItem>
+                              <SelectItem value="Under Review">Under Review</SelectItem>
+                              <SelectItem value="Assigned">Assigned</SelectItem>
+                              <SelectItem value="In Progress">In Progress</SelectItem>
+                              <SelectItem value="Resolved">Resolved</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                        
+                        {/* Show delete button only for regular users who own the issue, NOT for admins */}
+                        {(!isAdmin && user && user.id === issue.user_id) && (
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDeleteIssue(issue.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                       
-                      {/* Show delete button only for regular users who own the issue, NOT for admins */}
-                      {(!isAdmin && user && user.id === issue.user_id) && (
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleDeleteIssue(issue.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                      {/* Issue Image */}
+                      {issue.image_url && (
+                        <div className="w-32 h-32 flex-shrink-0">
+                          <img
+                            src={issue.image_url}
+                            alt="Issue attachment"
+                            className="w-full h-full object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => window.open(issue.image_url!, '_blank')}
+                          />
+                        </div>
                       )}
                     </div>
                   </div>
