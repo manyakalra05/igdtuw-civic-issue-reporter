@@ -22,7 +22,7 @@ const Index = () => {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <MessageSquare className="h-5 w-5 text-white" />
+                <Users className="h-5 w-5 text-white" />
               </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 IGDTUW Civic Reporter
