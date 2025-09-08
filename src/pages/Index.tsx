@@ -1,17 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, MessageSquare, Users, TrendingUp, MapPin, Shield } from "lucide-react";
+import { ArrowRight, MessageSquare, Users, TrendingUp, MapPin, Shield, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdmin } from "@/contexts/AdminContext";
+import { useState } from "react";
 
 const Index = () => {
   const { user } = useAuth();
   const { isAdmin, adminLogout } = useAdmin();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleAdminLogout = () => {
     adminLogout();
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   return (
@@ -29,7 +35,20 @@ const Index = () => {
               </h1>
             </div>
             
-            <div className="flex items-center space-x-4">
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleMobileMenu}
+                className="text-slate-600"
+              >
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+            </div>
+            
+            {/* Desktop navigation */}
+            <div className="hidden md:flex items-center space-x-4">
               {isAdmin && (
                 <div className="flex items-center space-x-2">
                   <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-200">
@@ -49,7 +68,7 @@ const Index = () => {
               
               {user ? (
                 <div className="flex items-center space-x-3">
-                  <span className="text-sm text-slate-600">Welcome, {user.email}</span>
+                  <span className="text-sm text-slate-600 hidden lg:inline-block">Welcome, {user.email}</span>
                   <Link to="/dashboard">
                     <Button variant="outline" size="sm">Dashboard</Button>
                   </Link>
@@ -69,57 +88,102 @@ const Index = () => {
               )}
             </div>
           </div>
+          
+          {/* Mobile navigation menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden py-4 border-t border-slate-200">
+              {isAdmin && (
+                <div className="flex flex-col space-y-3 mb-4">
+                  <div className="flex items-center justify-center">
+                    <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-200">
+                      <Shield className="h-3 w-3 mr-1" />
+                      Admin Mode
+                    </Badge>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleAdminLogout}
+                    className="text-red-600 hover:text-red-700 w-full"
+                  >
+                    Exit Admin
+                  </Button>
+                </div>
+              )}
+              
+              {user ? (
+                <div className="flex flex-col space-y-3">
+                  <div className="text-center text-sm text-slate-600 py-2">Welcome, {user.email}</div>
+                  <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full">Dashboard</Button>
+                  </Link>
+                </div>
+              ) : (
+                <div className="flex flex-col space-y-3">
+                  <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 border-red-200 w-full">
+                      <Shield className="h-4 w-4 mr-1" />
+                      Admin
+                    </Button>
+                  </Link>
+                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                    <Button size="sm" className="w-full">Sign In</Button>
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 lg:py-32">
-        <div className="container mx-auto px-4">
-          <div className="lg:flex lg:items-center">
-            <div className="lg:w-1/2 mb-10 lg:mb-0">
-              <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white sm:text-4xl lg:text-5xl leading-tight">
+      <section className="relative overflow-hidden py-12 lg:py-32 px-4">
+        <div className="container mx-auto">
+          <div className="flex flex-col lg:flex-row lg:items-center">
+            <div className="lg:w-1/2 mb-10 lg:mb-0 text-center lg:text-left">
+              <h2 className="text-3xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl leading-tight">
                 <span className="inline-block transform hover:scale-105 transition-transform duration-300">
                   <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
                     Report
                   </span>
                 </span>
-                <span className="text-slate-700 dark:text-slate-300">, </span>
+                <span className="text-slate-700">, </span>
                 <span className="inline-block transform hover:scale-105 transition-transform duration-300 delay-100">
                   <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
                     Resolve
                   </span>
                 </span>
-                <span className="text-slate-700 dark:text-slate-300">, </span>
+                <span className="text-slate-700">, </span>
                 <br />
                 <span className="inline-block transform hover:scale-105 transition-transform duration-300 delay-200">
                   <span className="bg-gradient-to-r from-orange-600 via-pink-600 to-red-600 bg-clip-text text-transparent">
                     Improve
                   </span>
                 </span>
-                <span className="text-slate-700 dark:text-slate-300"> Our </span>
+                <span className="text-slate-700"> Our </span>
                 <span className="inline-block transform hover:scale-105 transition-transform duration-300 delay-300">
                   <span className="bg-gradient-to-r from-purple-600 via-violet-600 to-blue-600 bg-clip-text text-transparent font-black">
                     Campus
                   </span>
                 </span>
               </h2>
-              <p className="mt-4 text-slate-700 dark:text-slate-300 text-lg">
+              <p className="mt-4 text-slate-700 text-lg">
                 Be a part of the change. Report issues, track progress, and contribute to a better campus environment for everyone.
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link to="/report">
-                  <Button size="lg">
+              <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+                <Link to="/report" className="flex justify-center lg:justify-start">
+                  <Button size="lg" className="w-full sm:w-auto">
                     Report an Issue <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <Link to={user ? "/dashboard" : "/auth"}>
-                  <Button variant="outline" size="lg">
+                <Link to={user ? "/dashboard" : "/auth"} className="flex justify-center lg:justify-start">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
                     {user ? "Go to Dashboard" : "Sign In to View"}
                   </Button>
                 </Link>
               </div>
             </div>
-            <div className="lg:w-1/2">
+            <div className="lg:w-1/2 mt-8 lg:mt-0">
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
                 <div className="relative">
@@ -141,15 +205,15 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Key Features</h3>
-            <p className="mt-3 text-slate-600 dark:text-slate-400">Explore the features that make our platform effective and user-friendly.</p>
+      <section className="py-16 lg:py-20 bg-white/50 backdrop-blur-sm px-4">
+        <div className="container mx-auto">
+          <div className="text-center mb-12 lg:mb-16">
+            <h3 className="text-2xl font-bold text-slate-900">Key Features</h3>
+            <p className="mt-3 text-slate-600">Explore the features that make our platform effective and user-friendly.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Feature Card 1 */}
-            <Card className="bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300">
+            <Card className="bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center text-lg font-semibold">
                   <MessageSquare className="mr-2 h-5 w-5 text-blue-500" />
@@ -157,14 +221,14 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-slate-600 dark:text-slate-300">
+                <CardDescription className="text-slate-600">
                   Report issues in just a few steps with our intuitive form. Add details, location, and even photos.
                 </CardDescription>
               </CardContent>
             </Card>
 
             {/* Feature Card 2 */}
-            <Card className="bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300">
+            <Card className="bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center text-lg font-semibold">
                   <Users className="mr-2 h-5 w-5 text-green-500" />
@@ -172,14 +236,14 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-slate-600 dark:text-slate-300">
+                <CardDescription className="text-slate-600">
                   Upvote issues, leave comments, and follow progress. Work together to prioritize and resolve problems.
                 </CardDescription>
               </CardContent>
             </Card>
 
             {/* Feature Card 3 */}
-            <Card className="bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-shadow duration-300">
+            <Card className="bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center text-lg font-semibold">
                   <TrendingUp className="mr-2 h-5 w-5 text-orange-500" />
@@ -187,7 +251,7 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-slate-600 dark:text-slate-300">
+                <CardDescription className="text-slate-600">
                   Track the status of reported issues from submission to resolution. Stay informed every step of the way.
                 </CardDescription>
               </CardContent>
@@ -197,21 +261,21 @@ const Index = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600">
-        <div className="container mx-auto px-4 text-white text-center">
-          <h3 className="text-3xl font-bold mb-4">Our Impact</h3>
+      <section className="py-12 lg:py-16 bg-gradient-to-r from-blue-600 to-indigo-600 px-4">
+        <div className="container mx-auto text-white text-center">
+          <h3 className="text-2xl lg:text-3xl font-bold mb-4">Our Impact</h3>
           <p className="text-lg mb-8">See the difference we're making together.</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <div className="text-5xl font-extrabold mb-2">120+</div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            <div className="p-4">
+              <div className="text-4xl lg:text-5xl font-extrabold mb-2">120+</div>
               <p className="text-slate-200">Issues Reported</p>
             </div>
-            <div>
-              <div className="text-5xl font-extrabold mb-2">85+</div>
+            <div className="p-4">
+              <div className="text-4xl lg:text-5xl font-extrabold mb-2">85+</div>
               <p className="text-slate-200">Issues Resolved</p>
             </div>
-            <div>
-              <div className="text-5xl font-extrabold mb-2">500+</div>
+            <div className="p-4">
+              <div className="text-4xl lg:text-5xl font-extrabold mb-2">500+</div>
               <p className="text-slate-200">Active Users</p>
             </div>
           </div>
@@ -219,16 +283,16 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 text-center">
-          <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">Ready to Make a Difference?</h3>
-          <p className="text-slate-700 dark:text-slate-300 text-lg mb-8">Join our community and help us create a better campus for everyone.</p>
-          <div className="flex justify-center gap-4">
-            <Link to="/report">
-              <Button size="lg">Report an Issue</Button>
+      <section className="py-16 lg:py-20 bg-white/80 backdrop-blur-sm px-4">
+        <div className="container mx-auto text-center">
+          <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-6">Ready to Make a Difference?</h3>
+          <p className="text-slate-700 text-lg mb-8">Join our community and help us create a better campus for everyone.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link to="/report" className="flex justify-center">
+              <Button size="lg" className="w-full sm:w-auto">Report an Issue</Button>
             </Link>
-            <Link to={user ? "/dashboard" : "/auth"}>
-              <Button variant="outline" size="lg">
+            <Link to={user ? "/dashboard" : "/auth"} className="flex justify-center">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 {user ? "Go to Dashboard" : "Sign In"}
               </Button>
             </Link>
@@ -237,14 +301,14 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <div>
+      <footer className="bg-slate-900 text-white py-12 px-4">
+        <div className="container mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center md:items-start mb-8 gap-6">
+            <div className="text-center md:text-left">
               <h4 className="text-xl font-bold">IGDTUW Civic Reporter</h4>
               <p className="text-slate-400 mt-2">Empowering students to improve our campus.</p>
             </div>
-            <div className="space-x-4">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 text-center">
               <a href="#" className="hover:text-blue-400">Terms of Service</a>
               <a href="#" className="hover:text-blue-400">Privacy Policy</a>
             </div>

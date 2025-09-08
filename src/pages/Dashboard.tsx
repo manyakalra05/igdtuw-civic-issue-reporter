@@ -19,7 +19,7 @@ const Dashboard = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const { isAdmin, adminLogout } = useAdmin();
   const { issues, loading, error, updateIssueStatus, deleteIssue, getStats, toggleUpvote, checkUserUpvote } = useIssues();
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
@@ -39,7 +39,7 @@ const Dashboard = () => {
   useEffect(() => {
     const loadUserUpvotes = async () => {
       if (!user) return;
-      
+
       const upvotedIssues = new Set<string>();
       for (const issue of issues) {
         const hasUpvoted = await checkUserUpvote(issue.id);
@@ -95,7 +95,7 @@ const Dashboard = () => {
 
     try {
       await toggleUpvote(issueId);
-      
+
       // Update local upvote state
       const newUpvotes = new Set(userUpvotes);
       if (userUpvotes.has(issueId)) {
@@ -124,11 +124,11 @@ const Dashboard = () => {
   // Filter issues based on search and filters
   const filteredIssues = issues.filter(issue => {
     const matchesSearch = issue.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         issue.description.toLowerCase().includes(searchTerm.toLowerCase());
+      issue.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || issue.status.toLowerCase() === statusFilter.toLowerCase();
     const matchesPriority = priorityFilter === "all" || issue.priority.toLowerCase() === priorityFilter.toLowerCase();
     const matchesCategory = categoryFilter === "all" || issue.category === categoryFilter;
-    
+
     return matchesSearch && matchesStatus && matchesPriority && matchesCategory;
   });
 
@@ -139,7 +139,7 @@ const Dashboard = () => {
 
   const statusColors = {
     "Reported": "bg-yellow-100 text-yellow-800",
-    "Under Review": "bg-blue-100 text-blue-800", 
+    "Under Review": "bg-blue-100 text-blue-800",
     "Assigned": "bg-purple-100 text-purple-800",
     "In Progress": "bg-orange-100 text-orange-800",
     "Resolved": "bg-green-100 text-green-800"
@@ -178,7 +178,7 @@ const Dashboard = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="w-96">
+        <Card className="w-96 mx-4">
           <CardHeader>
             <CardTitle className="text-red-600">Error Loading Data</CardTitle>
           </CardHeader>
@@ -193,80 +193,85 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {/* Header - Mobile Responsive */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-700">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
-              </Link>
-              <h1 className="text-2xl font-bold text-gray-900">Issues Dashboard</h1>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-700">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Back to Home</span>
+                  <span className="sm:hidden">Back</span>
+                </Link>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard</h1>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               {isAdmin && (
-                <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-200">
+                <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-200 self-start sm:self-auto">
                   <Shield className="h-3 w-3 mr-1" />
                   Admin Mode
                 </Badge>
               )}
-              {user && <span className="text-sm text-gray-600">Welcome, {user.email}</span>}
-              {isAdmin && !user && <span className="text-sm text-gray-600">College Administration</span>}
-              <Button variant="outline" onClick={handleSignOut}>
-                {isAdmin ? "Exit Admin" : "Sign Out"}
-              </Button>
+              <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-4">
+                {user && <span className="text-sm text-gray-600 truncate max-w-48">{user.email}</span>}
+                {isAdmin && !user && <span className="text-sm text-gray-600">College Administration</span>}
+                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                  {isAdmin ? "Exit Admin" : "Sign Out"}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        {/* Stats Cards - Mobile Responsive */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <AlertTriangle className="h-8 w-8 text-blue-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Issues</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.totalIssues}</p>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <AlertTriangle className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mb-2 sm:mb-0" />
+                <div className="sm:ml-4">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Total Issues</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.totalIssues}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Clock className="h-8 w-8 text-yellow-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Pending</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.pendingIssues}</p>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-600 mb-2 sm:mb-0" />
+                <div className="sm:ml-4">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Pending</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.pendingIssues}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Clock className="h-8 w-8 text-orange-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">In Progress</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.inProgressIssues}</p>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600 mb-2 sm:mb-0" />
+                <div className="sm:ml-4">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">In Progress</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.inProgressIssues}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <CheckCircle className="h-8 w-8 text-green-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Resolved</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.resolvedIssues}</p>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mb-2 sm:mb-0" />
+                <div className="sm:ml-4">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Resolved</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.resolvedIssues}</p>
                 </div>
               </div>
             </CardContent>
@@ -274,13 +279,14 @@ const Dashboard = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <Link to="/report">
-            <Button>Report New Issue</Button>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
+          <Link to="/report" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto">Report New Issue</Button>
           </Link>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setShowMap(!showMap)}
+            className="w-full sm:w-auto"
           >
             <MapPin className="h-4 w-4 mr-2" />
             {showMap ? "Hide Map" : "Show Map"}
@@ -289,7 +295,7 @@ const Dashboard = () => {
 
         {/* Map Section */}
         {showMap && (
-          <Card className="mb-8">
+          <Card className="mb-6 sm:mb-8">
             <CardHeader>
               <CardTitle>Campus Issues Map</CardTitle>
               <CardDescription>
@@ -310,10 +316,11 @@ const Dashboard = () => {
           </Card>
         )}
 
-        {/* Filters */}
+        {/* Filters - Mobile Responsive */}
         <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <CardContent className="p-4 sm:p-6">
+            <div className="space-y-4">
+              {/* Search - Full width on mobile */}
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
@@ -324,73 +331,75 @@ const Dashboard = () => {
                 />
               </div>
               
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="reported">Reported</SelectItem>
-                  <SelectItem value="under review">Under Review</SelectItem>
-                  <SelectItem value="assigned">Assigned</SelectItem>
-                  <SelectItem value="in progress">In Progress</SelectItem>
-                  <SelectItem value="resolved">Resolved</SelectItem>
-                </SelectContent>
-              </Select>
+              {/* Filters - Stack on mobile, grid on desktop */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="reported">Reported</SelectItem>
+                    <SelectItem value="under review">Under Review</SelectItem>
+                    <SelectItem value="assigned">Assigned</SelectItem>
+                    <SelectItem value="in progress">In Progress</SelectItem>
+                    <SelectItem value="resolved">Resolved</SelectItem>
+                  </SelectContent>
+                </Select>
 
-              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by Priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Priorities</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="critical">Critical</SelectItem>
-                </SelectContent>
-              </Select>
+                <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by Priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Priorities</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
 
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Issues List */}
+        {/* Issues List - Mobile Responsive */}
         <div className="space-y-4">
           {filteredIssues.length === 0 ? (
             <Card>
-              <CardContent className="p-8 text-center">
+              <CardContent className="p-6 sm:p-8 text-center">
                 <AlertTriangle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Issues Found</h3>
                 <p className="text-gray-600">
-                  {issues.length === 0 
-                    ? "No issues have been reported yet." 
+                  {issues.length === 0
+                    ? "No issues have been reported yet."
                     : "No issues match your current filters."}
                 </p>
               </CardContent>
             </Card>
-          ) : (
+            ) : (
             filteredIssues.map((issue) => (
               <Card key={issue.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-6">
-                    {/* Left side - Main content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2 flex-wrap">
-                        <h3 className="text-lg font-semibold text-gray-900">{issue.title}</h3>
+                <CardContent className="p-4 sm:p-6">
+                  <div className="space-y-4">
+                    <div className="flex flex-col space-y-3">
+                      <h3 className="text-lg font-semibold text-gray-900 leading-tight break-words">{issue.title}</h3>
+                      <div className="flex flex-wrap gap-2">
                         <Badge className={statusColors[issue.status as keyof typeof statusColors] || "bg-gray-100 text-gray-800"}>
                           {issue.status}
                         </Badge>
@@ -404,26 +413,40 @@ const Dashboard = () => {
                           </Badge>
                         )}
                       </div>
-                      
-                      <p className="text-gray-600 mb-3">{issue.description}</p>
-                      
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-3">
-                        <span className="flex items-center">
-                          <MapPin className="h-4 w-4 mr-1" />
+                    </div>
+                    
+                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed break-words">{issue.description}</p>
+                    
+                    <div className="space-y-2 text-sm text-gray-500">
+                      <div className="flex items-start">
+                        <MapPin className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                        <span className="break-words">
                           {issue.location}
                           {issue.latitude && issue.longitude && (
                             <span className="ml-1 text-green-600">(📍Mapped)</span>
                           )}
                         </span>
-                        <span>Category: {issue.category}</span>
-                        <span>Reported: {new Date(issue.reported_date).toLocaleDateString()}</span>
-                        {issue.contact_email && (
-                          <span>Contact: {issue.contact_email}</span>
-                        )}
                       </div>
+                      <div>Category: {issue.category}</div>
+                      <div>Reported: {new Date(issue.reported_date).toLocaleDateString()}</div>
+                      {issue.contact_email && (
+                        <div className="break-words">Contact: {issue.contact_email}</div>
+                      )}
+                    </div>
 
-                      {/* Community Actions */}
-                      <div className="flex items-center space-x-4">
+                    {issue.image_url && (
+                      <div className="w-full sm:max-w-xs">
+                        <img
+                          src={issue.image_url}
+                          alt="Issue attachment"
+                          className="w-full h-48 sm:h-32 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => window.open(issue.image_url!, '_blank')}
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 pt-3 border-t border-gray-100">
+                      <div className="flex items-center space-x-3">
                         <Button
                           variant={userUpvotes.has(issue.id) ? "default" : "outline"}
                           size="sm"
@@ -442,22 +465,18 @@ const Dashboard = () => {
                           className="flex items-center space-x-1"
                         >
                           <Eye className="h-4 w-4" />
-                          <span>View Details</span>
+                          <span className="hidden sm:inline">View Details</span>
+                          <span className="sm:hidden">View</span>
                         </Button>
                       </div>
-                    </div>
-                    
-                    {/* Right side - Actions and Image */}
-                    <div className="flex flex-col items-end gap-4">
-                      {/* Action buttons */}
-                      <div className="flex items-center gap-2">
-                        {/* Show status update dropdown only for regular users who own the issue */}
+
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
                         {(!isAdmin && user && user.id === issue.user_id) && (
                           <Select
                             value={issue.status}
                             onValueChange={(value) => handleStatusUpdate(issue.id, value)}
                           >
-                            <SelectTrigger className="w-40">
+                            <SelectTrigger className="w-full sm:w-40">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -470,29 +489,17 @@ const Dashboard = () => {
                           </Select>
                         )}
                         
-                        {/* Show delete button only for regular users who own the issue, NOT for admins */}
                         {(!isAdmin && user && user.id === issue.user_id) && (
                           <Button
                             variant="outline"
                             size="icon"
                             onClick={() => handleDeleteIssue(issue.id)}
+                            className="flex-shrink-0"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         )}
                       </div>
-                      
-                      {/* Issue Image */}
-                      {issue.image_url && (
-                        <div className="w-32 h-32 flex-shrink-0">
-                          <img
-                            src={issue.image_url}
-                            alt="Issue attachment"
-                            className="w-full h-full object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
-                            onClick={() => window.open(issue.image_url!, '_blank')}
-                          />
-                        </div>
-                      )}
                     </div>
                   </div>
                 </CardContent>
