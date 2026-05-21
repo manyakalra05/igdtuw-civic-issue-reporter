@@ -109,7 +109,7 @@ const ReportIssue = () => {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${user?.id}-${Date.now()}.${fileExt}`;
-      const filePath = `issue-images/${fileName}`;
+      const filePath = fileName;
 
       const { error: uploadError } = await supabase.storage
         .from('issue-images')
