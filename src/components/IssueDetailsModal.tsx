@@ -128,20 +128,24 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
 
   if (!issue) return null;
 
+  const badgeBase = "font-mono uppercase text-[10px] tracking-wider border";
+
   const statusColors = {
-    "Reported": "bg-yellow-100 text-yellow-800",
-    "Under Review": "bg-blue-100 text-blue-800", 
-    "Assigned": "bg-purple-100 text-purple-800",
-    "In Progress": "bg-orange-100 text-orange-800",
-    "Resolved": "bg-green-100 text-green-800"
+    "Reported": `bg-status-pending/15 text-status-pending border-status-pending/30 ${badgeBase}`,
+    "Under Review": `bg-status-review/15 text-status-review border-status-review/30 ${badgeBase}`,
+    "Assigned": `bg-primary/10 text-primary border-primary/30 ${badgeBase}`,
+    "In Progress": `bg-status-progress/15 text-status-progress border-status-progress/30 ${badgeBase}`,
+    "Resolved": `bg-status-resolved/15 text-status-resolved border-status-resolved/30 ${badgeBase}`
   };
 
   const priorityColors = {
-    "Low": "bg-gray-100 text-gray-800",
-    "Medium": "bg-yellow-100 text-yellow-800",
-    "High": "bg-orange-100 text-orange-800",
-    "Critical": "bg-red-100 text-red-800"
+    "Low": `bg-secondary text-secondary-foreground border-border ${badgeBase}`,
+    "Medium": `bg-status-pending/15 text-status-pending border-status-pending/30 ${badgeBase}`,
+    "High": `bg-status-progress/15 text-status-progress border-status-progress/30 ${badgeBase}`,
+    "Critical": `bg-destructive/15 text-destructive border-destructive/30 ${badgeBase}`
   };
+
+  const fallbackBadge = `bg-secondary text-secondary-foreground border-border ${badgeBase}`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -149,14 +153,14 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
         <DialogHeader>
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <DialogTitle className="text-xl font-semibold mb-2">{issue.title}</DialogTitle>
+              <DialogTitle className="text-xl font-display font-semibold mb-2">{issue.title}</DialogTitle>
               <DialogDescription className="text-base">{issue.description}</DialogDescription>
             </div>
             <div className="flex flex-col gap-2 ml-4">
-              <Badge className={statusColors[issue.status as keyof typeof statusColors] || "bg-gray-100 text-gray-800"}>
+              <Badge className={statusColors[issue.status as keyof typeof statusColors] || fallbackBadge}>
                 {issue.status}
               </Badge>
-              <Badge className={priorityColors[issue.priority as keyof typeof priorityColors] || "bg-gray-100 text-gray-800"}>
+              <Badge className={priorityColors[issue.priority as keyof typeof priorityColors] || fallbackBadge}>
                 {issue.priority}
               </Badge>
               {issue.image_url && (
@@ -173,7 +177,7 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
           {/* Issue Details */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center">
+              <CardTitle className="text-lg font-display uppercase flex items-center">
                 <MessageSquare className="h-5 w-5 mr-2" />
                 Issue Details
               </CardTitle>
@@ -181,9 +185,9 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
             <CardContent className="space-y-4">
               {/* Image Display */}
               {issue.image_url && (
-                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <div className="border border-border p-4 bg-muted">
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-medium text-gray-900 flex items-center">
+                    <h4 className="text-sm font-medium text-foreground flex items-center font-mono uppercase tracking-wide">
                       <ImageIcon className="h-4 w-4 mr-2" />
                       Attached Image
                     </h4>
@@ -201,7 +205,7 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
                     <img
                       src={issue.image_url}
                       alt="Issue attachment"
-                      className="max-w-full max-h-80 rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                      className="max-w-full max-h-80 shadow-sm border border-border cursor-pointer hover:opacity-90 transition-opacity"
                       onClick={() => window.open(issue.image_url!, '_blank')}
                     />
                   </div>
@@ -209,30 +213,30 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
               )}
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center text-sm text-gray-600">
+                <div className="flex items-center text-sm text-muted-foreground font-mono">
                   <MapPin className="h-4 w-4 mr-2" />
                   <span>{issue.location}</span>
                   {issue.latitude && issue.longitude && (
                     <Badge variant="outline" className="ml-2 text-xs">Mapped</Badge>
                   )}
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
+                <div className="flex items-center text-sm text-muted-foreground font-mono">
                   <Calendar className="h-4 w-4 mr-2" />
                   <span>Reported: {format(new Date(issue.reported_date), 'PPP')}</span>
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
+                <div className="flex items-center text-sm text-muted-foreground font-mono">
                   <Clock className="h-4 w-4 mr-2" />
                   <span>Updated: {format(new Date(issue.updated_at), 'PPp')}</span>
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
+                <div className="flex items-center text-sm text-muted-foreground font-mono">
                   <User className="h-4 w-4 mr-2" />
                   <span>Category: {issue.category}</span>
                 </div>
               </div>
               
               {issue.contact_email && (
-                <div className="text-sm text-gray-600">
-                  <strong>Contact:</strong> {issue.contact_email}
+                <div className="text-sm text-muted-foreground font-mono">
+                  <strong className="text-foreground">Contact:</strong> {issue.contact_email}
                   {issue.contact_phone && ` • ${issue.contact_phone}`}
                 </div>
               )}
@@ -240,13 +244,13 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
           </Card>
 
           {/* Tabs */}
-          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+          <div className="flex border-b border-border">
             <button
               onClick={() => setActiveTab("responses")}
-              className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide transition-colors border-b-2 -mb-px ${
                 activeTab === "responses"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "border-accent text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               <MessageSquare className="h-4 w-4 inline mr-2" />
@@ -254,10 +258,10 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
             </button>
             <button
               onClick={() => setActiveTab("history")}
-              className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide transition-colors border-b-2 -mb-px ${
                 activeTab === "history"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "border-accent text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               <History className="h-4 w-4 inline mr-2" />
@@ -269,11 +273,11 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
           {activeTab === "responses" ? (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Responses & Updates</CardTitle>
+                <CardTitle className="text-lg font-display uppercase">Responses &amp; Updates</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {responses.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No responses yet.</p>
+                  <p className="text-muted-foreground text-center py-8">No responses yet.</p>
                 ) : (
                   <div className="space-y-4 max-h-64 overflow-y-auto">
                     {responses.map((response) => {
@@ -281,29 +285,29 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
                       return (
                         <div 
                           key={response.id} 
-                          className={`border-l-4 pl-4 py-2 ${
-                            isAdminResponse ? 'border-red-500 bg-red-50' : 'border-blue-500'
+                          className={`border-l-2 pl-4 py-2 ${
+                            isAdminResponse ? 'border-accent bg-accent/5' : 'border-primary/40'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center space-x-2">
-                              <Badge variant="outline" className="text-xs">
+                              <Badge variant="outline" className="text-xs font-mono uppercase tracking-wide">
                                 {response.response_type === 'update' ? 'Update' : 
                                  response.response_type === 'resolution' ? 'Resolution' : 'Comment'}
                               </Badge>
                               {isAdminResponse && (
-                                <Badge variant="destructive" className="text-xs bg-red-100 text-red-800">
+                                <Badge className="text-xs bg-accent/15 text-accent border border-accent/30 font-mono uppercase tracking-wide">
                                   <Shield className="h-3 w-3 mr-1" />
                                   Admin
                                 </Badge>
                               )}
                             </div>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-muted-foreground font-mono">
                               {format(new Date(response.created_at), 'PPp')}
                             </span>
                           </div>
                           <p className={`text-sm ${
-                            isAdminResponse ? 'text-red-800 font-medium' : 'text-gray-700'
+                            isAdminResponse ? 'text-foreground font-medium' : 'text-muted-foreground'
                           }`}>
                             {response.response_text}
                           </p>
@@ -315,10 +319,10 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
 
                 {/* Add Response Form */}
                 {(user || isAdmin) && (
-                  <div className="border-t pt-4 space-y-4">
+                  <div className="border-t border-border pt-4 space-y-4">
                     <div className="flex items-center space-x-2">
                       {isAdmin && (
-                        <Badge variant="destructive" className="bg-red-100 text-red-800">
+                        <Badge className="bg-accent/15 text-accent border border-accent/30 font-mono uppercase tracking-wide">
                           <Shield className="h-3 w-3 mr-1" />
                           Admin Response
                         </Badge>
@@ -345,7 +349,7 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
                     <Button 
                       onClick={handleSubmitResponse}
                       disabled={isSubmitting || !newResponse.trim()}
-                      className={isAdmin ? "bg-red-600 hover:bg-red-700" : ""}
+                      className={isAdmin ? "bg-primary hover:bg-primary/90" : "bg-accent hover:bg-accent/90 text-accent-foreground"}
                     >
                       {isSubmitting ? "Adding Response..." : 
                        isAdmin ? "Add Admin Response" : "Add Response"}
@@ -357,34 +361,34 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
           ) : (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Status History</CardTitle>
+                <CardTitle className="text-lg font-display uppercase">Status History</CardTitle>
               </CardHeader>
               <CardContent>
                 {statusHistory.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No status changes yet.</p>
+                  <p className="text-muted-foreground text-center py-8">No status changes yet.</p>
                 ) : (
                   <div className="space-y-3 max-h-64 overflow-y-auto">
                     {statusHistory.map((history) => (
-                      <div key={history.id} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                      <div key={history.id} className="flex items-center space-x-4 p-3 bg-muted border border-border">
                         <div className="flex-1">
                           <div className="flex items-center space-x-2">
                             {history.old_status && (
                               <>
-                                <Badge variant="outline" className="text-xs">
+                                <Badge variant="outline" className="text-xs font-mono uppercase">
                                   {history.old_status}
                                 </Badge>
-                                <span className="text-gray-400">→</span>
+                                <span className="text-muted-foreground">&rarr;</span>
                               </>
                             )}
-                            <Badge className={statusColors[history.new_status as keyof typeof statusColors] || "bg-gray-100 text-gray-800"}>
+                            <Badge className={statusColors[history.new_status as keyof typeof statusColors] || fallbackBadge}>
                               {history.new_status}
                             </Badge>
                           </div>
                           {history.change_reason && (
-                            <p className="text-xs text-gray-600 mt-1">{history.change_reason}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{history.change_reason}</p>
                           )}
                         </div>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-muted-foreground font-mono">
                           {format(new Date(history.created_at), 'PPp')}
                         </span>
                       </div>

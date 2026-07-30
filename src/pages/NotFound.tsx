@@ -12,11 +12,19 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <div className="text-center max-w-sm">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
+          Ticket Not Found
+        </p>
+        <h1 className="text-6xl font-display font-extrabold text-foreground mb-4">404</h1>
+        <p className="text-muted-foreground mb-6 font-mono text-sm break-all">
+          No record at <span className="text-foreground">{location.pathname}</span>
+        </p>
+        <a
+          href="/"
+          className="inline-block bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 font-medium transition-colors"
+        >
           Return to Home
         </a>
       </div>

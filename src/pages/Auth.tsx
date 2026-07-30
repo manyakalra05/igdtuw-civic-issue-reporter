@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -105,29 +104,32 @@ const Auth = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto"></div>
+          <p className="mt-2 text-muted-foreground font-mono text-sm">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4">
+          <Link to="/" className="inline-flex items-center text-muted-foreground hover:text-accent mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-2">
+              {isLogin ? "Returning User" : "New Account"}
+            </p>
+            <h1 className="text-3xl font-display font-bold text-foreground uppercase">
               {isLogin ? "Welcome Back" : "Create Account"}
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-muted-foreground mt-2">
               {isLogin 
                 ? "Sign in to your IGDTUW Civic Reporter account" 
                 : "Join IGDTUW Civic Reporter to report and track issues"
@@ -136,9 +138,9 @@ const Auth = () => {
           </div>
         </div>
 
-        <Card className="animate-fade-in">
+        <Card className="border-t-2 border-t-primary">
           <CardHeader>
-            <CardTitle>{isLogin ? "Sign In" : "Sign Up"}</CardTitle>
+            <CardTitle className="font-display uppercase">{isLogin ? "Sign In" : "Sign Up"}</CardTitle>
             <CardDescription>
               {isLogin 
                 ? "Enter your credentials to access your account" 
@@ -153,7 +155,7 @@ const Auth = () => {
                 <div className="space-y-2">
                   <Label htmlFor="fullName">Full Name</Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="fullName"
                       placeholder="Enter your full name"
@@ -168,7 +170,7 @@ const Auth = () => {
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
@@ -184,7 +186,7 @@ const Auth = () => {
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="password"
                     type="password"
@@ -201,7 +203,7 @@ const Auth = () => {
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="confirmPassword"
                       type="password"
@@ -217,7 +219,7 @@ const Auth = () => {
 
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" 
                 size="lg" 
                 disabled={isSubmitting}
               >
@@ -229,12 +231,12 @@ const Auth = () => {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 {isLogin ? "Don't have an account?" : "Already have an account?"}
                 <button
                   type="button"
                   onClick={() => setIsLogin(!isLogin)}
-                  className="ml-1 text-blue-600 hover:text-blue-700 font-medium"
+                  className="ml-1 text-accent hover:text-accent/80 font-medium"
                 >
                   {isLogin ? "Sign up" : "Sign in"}
                 </button>

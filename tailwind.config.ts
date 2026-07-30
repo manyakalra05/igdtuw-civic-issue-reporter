@@ -18,7 +18,18 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				display: ['var(--font-display)'],
+				body: ['var(--font-body)'],
+				mono: ['var(--font-mono)'],
+			},
 			colors: {
+				status: {
+					resolved: 'hsl(var(--status-resolved))',
+					progress: 'hsl(var(--status-progress))',
+					pending: 'hsl(var(--status-pending))',
+					review: 'hsl(var(--status-review))',
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -94,4 +105,3 @@ export default {
 	},
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
-

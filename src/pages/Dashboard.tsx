@@ -137,19 +137,21 @@ const Dashboard = () => {
 
   const stats = getStats();
 
+  const badgeBase = "font-mono uppercase text-[10px] tracking-wider border";
+
   const statusColors = {
-    "Reported": "bg-yellow-100 text-yellow-800",
-    "Under Review": "bg-blue-100 text-blue-800",
-    "Assigned": "bg-purple-100 text-purple-800",
-    "In Progress": "bg-orange-100 text-orange-800",
-    "Resolved": "bg-green-100 text-green-800"
+    "Reported": `bg-status-pending/15 text-status-pending border-status-pending/30 ${badgeBase}`,
+    "Under Review": `bg-status-review/15 text-status-review border-status-review/30 ${badgeBase}`,
+    "Assigned": `bg-primary/10 text-primary border-primary/30 ${badgeBase}`,
+    "In Progress": `bg-status-progress/15 text-status-progress border-status-progress/30 ${badgeBase}`,
+    "Resolved": `bg-status-resolved/15 text-status-resolved border-status-resolved/30 ${badgeBase}`
   };
 
   const priorityColors = {
-    "Low": "bg-gray-100 text-gray-800",
-    "Medium": "bg-yellow-100 text-yellow-800",
-    "High": "bg-orange-100 text-orange-800",
-    "Critical": "bg-red-100 text-red-800"
+    "Low": `bg-secondary text-secondary-foreground border-border ${badgeBase}`,
+    "Medium": `bg-status-pending/15 text-status-pending border-status-pending/30 ${badgeBase}`,
+    "High": `bg-status-progress/15 text-status-progress border-status-progress/30 ${badgeBase}`,
+    "Critical": `bg-destructive/15 text-destructive border-destructive/30 ${badgeBase}`
   };
 
   // Convert issues to map pins using actual stored coordinates
@@ -166,10 +168,10 @@ const Dashboard = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto"></div>
+          <p className="mt-2 text-muted-foreground font-mono text-sm">Loading...</p>
         </div>
       </div>
     );
@@ -177,14 +179,14 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="w-96 mx-4">
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="w-96 mx-4 border-t-2 border-t-destructive">
           <CardHeader>
-            <CardTitle className="text-red-600">Error Loading Data</CardTitle>
+            <CardTitle className="text-destructive font-display uppercase">Error Loading Data</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 mb-4">{error}</p>
-            <Button onClick={() => window.location.reload()}>Retry</Button>
+            <p className="text-muted-foreground mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()} className="bg-accent hover:bg-accent/90 text-accent-foreground">Retry</Button>
           </CardContent>
         </Card>
       </div>
@@ -192,32 +194,32 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header - Mobile Responsive */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-primary border-b border-primary/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 gap-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-700">
+                <Link to="/" className="inline-flex items-center text-primary-foreground/70 hover:text-primary-foreground">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   <span className="hidden sm:inline">Back to Home</span>
                   <span className="sm:hidden">Back</span>
                 </Link>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard</h1>
+                <h1 className="text-xl sm:text-2xl font-display font-bold text-primary-foreground uppercase tracking-tight">Dashboard</h1>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               {isAdmin && (
-                <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-200 self-start sm:self-auto">
+                <Badge className="bg-accent text-accent-foreground border-0 font-mono uppercase text-[10px] tracking-wider self-start sm:self-auto">
                   <Shield className="h-3 w-3 mr-1" />
                   Admin Mode
                 </Badge>
               )}
               <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-4">
-                {user && <span className="text-sm text-gray-600 truncate max-w-48">{user.email}</span>}
-                {isAdmin && !user && <span className="text-sm text-gray-600">College Administration</span>}
-                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                {user && <span className="text-sm text-primary-foreground/60 font-mono truncate max-w-48">{user.email}</span>}
+                {isAdmin && !user && <span className="text-sm text-primary-foreground/60 font-mono">College Administration</span>}
+                <Button variant="outline" size="sm" onClick={handleSignOut} className="!bg-transparent !border-primary-foreground/30 !text-primary-foreground hover:!bg-primary-foreground/10 hover:!text-primary-foreground">
                   {isAdmin ? "Exit Admin" : "Sign Out"}
                 </Button>
               </div>
@@ -229,49 +231,49 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Stats Cards - Mobile Responsive */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
-          <Card>
+          <Card className="border-t-2 border-t-primary">
             <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center">
-                <AlertTriangle className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mb-2 sm:mb-0" />
+                <AlertTriangle className="h-6 w-6 sm:h-8 sm:w-8 text-primary mb-2 sm:mb-0" />
                 <div className="sm:ml-4">
-                  <p className="text-xs sm:text-sm font-medium text-gray-600">Total Issues</p>
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.totalIssues}</p>
+                  <p className="text-xs sm:text-sm font-mono uppercase tracking-wide text-muted-foreground">Total Issues</p>
+                  <p className="text-xl sm:text-2xl font-mono font-bold text-foreground">{stats.totalIssues}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-t-2 border-t-status-pending">
             <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center">
-                <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-600 mb-2 sm:mb-0" />
+                <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-status-pending mb-2 sm:mb-0" />
                 <div className="sm:ml-4">
-                  <p className="text-xs sm:text-sm font-medium text-gray-600">Pending</p>
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.pendingIssues}</p>
+                  <p className="text-xs sm:text-sm font-mono uppercase tracking-wide text-muted-foreground">Pending</p>
+                  <p className="text-xl sm:text-2xl font-mono font-bold text-foreground">{stats.pendingIssues}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-t-2 border-t-status-progress">
             <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center">
-                <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600 mb-2 sm:mb-0" />
+                <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-status-progress mb-2 sm:mb-0" />
                 <div className="sm:ml-4">
-                  <p className="text-xs sm:text-sm font-medium text-gray-600">In Progress</p>
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.inProgressIssues}</p>
+                  <p className="text-xs sm:text-sm font-mono uppercase tracking-wide text-muted-foreground">In Progress</p>
+                  <p className="text-xl sm:text-2xl font-mono font-bold text-foreground">{stats.inProgressIssues}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-t-2 border-t-status-resolved">
             <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center">
-                <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mb-2 sm:mb-0" />
+                <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8 text-status-resolved mb-2 sm:mb-0" />
                 <div className="sm:ml-4">
-                  <p className="text-xs sm:text-sm font-medium text-gray-600">Resolved</p>
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.resolvedIssues}</p>
+                  <p className="text-xs sm:text-sm font-mono uppercase tracking-wide text-muted-foreground">Resolved</p>
+                  <p className="text-xl sm:text-2xl font-mono font-bold text-foreground">{stats.resolvedIssues}</p>
                 </div>
               </div>
             </CardContent>
@@ -281,7 +283,7 @@ const Dashboard = () => {
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
           <Link to="/report" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto">Report New Issue</Button>
+            <Button className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground">Report New Issue</Button>
           </Link>
           <Button
             variant="outline"
@@ -297,7 +299,7 @@ const Dashboard = () => {
         {showMap && (
           <Card className="mb-6 sm:mb-8">
             <CardHeader>
-              <CardTitle>Campus Issues Map</CardTitle>
+              <CardTitle className="font-display uppercase">Campus Issues Map</CardTitle>
               <CardDescription>
                 Visual representation of reported issues across campus
                 {mapPins.length === 0 && " (No issues with location data to display)"}
@@ -306,8 +308,8 @@ const Dashboard = () => {
             <CardContent>
               <MapComponent pins={mapPins} className="w-full" />
               {mapPins.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                <div className="text-center py-8 text-muted-foreground">
+                  <MapPin className="h-12 w-12 mx-auto mb-4 text-muted-foreground/40" />
                   <p>No issues with location data to display on the map.</p>
                   <p className="text-sm">Issues reported with map selection will appear here.</p>
                 </div>
@@ -322,7 +324,7 @@ const Dashboard = () => {
             <div className="space-y-4">
               {/* Search - Full width on mobile */}
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search issues..."
                   className="pl-10"
@@ -383,9 +385,9 @@ const Dashboard = () => {
           {filteredIssues.length === 0 ? (
             <Card>
               <CardContent className="p-6 sm:p-8 text-center">
-                <AlertTriangle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Issues Found</h3>
-                <p className="text-gray-600">
+                <AlertTriangle className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+                <h3 className="text-lg font-display font-medium text-foreground mb-2 uppercase">No Issues Found</h3>
+                <p className="text-muted-foreground">
                   {issues.length === 0
                     ? "No issues have been reported yet."
                     : "No issues match your current filters."}
@@ -394,16 +396,16 @@ const Dashboard = () => {
             </Card>
             ) : (
             filteredIssues.map((issue) => (
-              <Card key={issue.id} className="hover:shadow-md transition-shadow">
+              <Card key={issue.id} className="hover:shadow-md transition-shadow border-l-2 border-l-transparent hover:border-l-accent">
                 <CardContent className="p-4 sm:p-6">
                   <div className="space-y-4">
                     <div className="flex flex-col space-y-3">
-                      <h3 className="text-lg font-semibold text-gray-900 leading-tight break-words">{issue.title}</h3>
+                      <h3 className="text-lg font-display font-semibold text-foreground leading-tight break-words">{issue.title}</h3>
                       <div className="flex flex-wrap gap-2">
-                        <Badge className={statusColors[issue.status as keyof typeof statusColors] || "bg-gray-100 text-gray-800"}>
+                        <Badge className={statusColors[issue.status as keyof typeof statusColors] || `bg-secondary text-secondary-foreground border-border ${badgeBase}`}>
                           {issue.status}
                         </Badge>
-                        <Badge className={priorityColors[issue.priority as keyof typeof priorityColors] || "bg-gray-100 text-gray-800"}>
+                        <Badge className={priorityColors[issue.priority as keyof typeof priorityColors] || `bg-secondary text-secondary-foreground border-border ${badgeBase}`}>
                           {issue.priority}
                         </Badge>
                         {issue.image_url && (
@@ -415,15 +417,15 @@ const Dashboard = () => {
                       </div>
                     </div>
                     
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed break-words">{issue.description}</p>
+                    <p className="text-muted-foreground text-sm sm:text-base leading-relaxed break-words">{issue.description}</p>
                     
-                    <div className="space-y-2 text-sm text-gray-500">
+                    <div className="space-y-2 text-sm text-muted-foreground font-mono">
                       <div className="flex items-start">
                         <MapPin className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
                         <span className="break-words">
                           {issue.location}
                           {issue.latitude && issue.longitude && (
-                            <span className="ml-1 text-green-600">(📍Mapped)</span>
+                            <span className="ml-1 text-status-resolved">(Mapped)</span>
                           )}
                         </span>
                       </div>
@@ -439,13 +441,13 @@ const Dashboard = () => {
                         <img
                           src={issue.image_url}
                           alt="Issue attachment"
-                          className="w-full h-48 sm:h-32 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
+                          className="w-full h-48 sm:h-32 object-cover border border-border cursor-pointer hover:opacity-80 transition-opacity"
                           onClick={() => window.open(issue.image_url!, '_blank')}
                         />
                       </div>
                     )}
 
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 pt-3 border-t border-gray-100">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 pt-3 border-t border-border">
                       <div className="flex items-center space-x-3">
                         <Button
                           variant={userUpvotes.has(issue.id) ? "default" : "outline"}

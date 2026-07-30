@@ -234,25 +234,26 @@ const ReportIssue = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto"></div>
+          <p className="mt-2 text-muted-foreground font-mono text-sm">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4">
+          <Link to="/" className="inline-flex items-center text-muted-foreground hover:text-accent mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Report a Campus Issue</h1>
-          <p className="text-gray-600 mt-2">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-2">New Ticket</p>
+          <h1 className="text-3xl font-display font-bold text-foreground uppercase">Report a Campus Issue</h1>
+          <p className="text-muted-foreground mt-2">
             Help us improve IGDTUW by reporting any issues you encounter on campus.
           </p>
         </div>
@@ -261,9 +262,9 @@ const ReportIssue = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Map */}
           <div>
-            <Card className="animate-fade-in">
+            <Card>
               <CardHeader>
-                <CardTitle>Select Location on Map</CardTitle>
+                <CardTitle className="font-display uppercase">Select Location on Map</CardTitle>
                 <CardDescription>
                   Click on the map to pinpoint the exact location of the issue.
                 </CardDescription>
@@ -278,12 +279,12 @@ const ReportIssue = () => {
                   </div>
                 </div>
                 {selectedLocation && (
-                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <div className="flex items-center text-green-700">
+                  <div className="mt-4 p-3 bg-status-resolved/10 border border-status-resolved/30">
+                    <div className="flex items-center text-status-resolved">
                       <MapPin className="h-4 w-4 mr-2" />
-                      <span className="text-sm font-medium">Location Selected</span>
+                      <span className="text-sm font-mono uppercase tracking-wide">Location Selected</span>
                     </div>
-                    <p className="text-sm text-green-600 mt-1">{selectedLocation.address}</p>
+                    <p className="text-sm text-status-resolved/80 mt-1">{selectedLocation.address}</p>
                   </div>
                 )}
               </CardContent>
@@ -292,9 +293,9 @@ const ReportIssue = () => {
 
           {/* Form */}
           <div>
-            <Card className="animate-fade-in">
+            <Card>
               <CardHeader>
-                <CardTitle>Issue Details</CardTitle>
+                <CardTitle className="font-display uppercase">Issue Details</CardTitle>
                 <CardDescription>
                   Please provide as much detail as possible to help us address your concern effectively.
                 </CardDescription>
@@ -348,7 +349,7 @@ const ReportIssue = () => {
                   <div className="space-y-2">
                     <Label htmlFor="location">Location Description</Label>
                     <div className="relative">
-                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="location"
                         placeholder="e.g., Block A, 2nd Floor, Room 205"
@@ -357,7 +358,7 @@ const ReportIssue = () => {
                         onChange={(e) => handleInputChange("location", e.target.value)}
                       />
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       Auto-filled when you select on map, or type manually.
                     </p>
                   </div>
@@ -377,12 +378,12 @@ const ReportIssue = () => {
                   <div className="space-y-2">
                     <Label htmlFor="image-upload">Upload Photo (Optional)</Label>
                     {!imagePreview ? (
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
-                        <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                      <div className="border-2 border-dashed border-border p-4 text-center hover:border-accent transition-colors">
+                        <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
                         <div className="mt-2">
                           <label htmlFor="image-upload" className="cursor-pointer">
-                            <span className="text-sm font-medium text-gray-900">Click to upload</span>
-                            <span className="block text-xs text-gray-500 mt-1">
+                            <span className="text-sm font-medium text-foreground">Click to upload</span>
+                            <span className="block text-xs text-muted-foreground mt-1">
                               PNG, JPG, GIF up to 10MB
                             </span>
                           </label>
@@ -396,13 +397,13 @@ const ReportIssue = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="relative border rounded-lg overflow-hidden">
+                      <div className="relative border border-border overflow-hidden">
                         <img
                           src={imagePreview}
                           alt="Issue preview"
                           className="w-full h-48 object-cover"
                         />
-                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                        <div className="absolute inset-0 bg-primary/70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                           <div className="flex items-center space-x-2">
                             <Button
                               type="button"
@@ -434,7 +435,7 @@ const ReportIssue = () => {
                       </div>
                     )}
                     {formData.image && (
-                      <div className="flex items-center text-sm text-green-600 mt-2">
+                      <div className="flex items-center text-sm text-status-resolved mt-2 font-mono">
                         <ImageIcon className="h-4 w-4 mr-2" />
                         <span>{formData.image.name} ({(formData.image.size / 1024 / 1024).toFixed(2)} MB)</span>
                       </div>
@@ -465,7 +466,7 @@ const ReportIssue = () => {
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+                  <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" size="lg" disabled={isSubmitting}>
                     {isSubmitting ? "Submitting..." : "Submit Issue Report"}
                   </Button>
                 </form>

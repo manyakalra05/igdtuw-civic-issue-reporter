@@ -115,7 +115,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           onClick={() => setIsAddingPin(!isAddingPin)}
           variant={isAddingPin ? "destructive" : "outline"}
           size="sm"
-          className="w-full sm:w-auto"
+          className={`w-full sm:w-auto ${!isAddingPin ? "border-accent text-accent hover:bg-accent/10 hover:text-accent" : ""}`}
         >
           <MapPin className="h-4 w-4 mr-2" />
           {isAddingPin ? "Cancel Adding Pin" : "Add Pin"}
@@ -123,18 +123,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
       </div>
 
       <div 
-        className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] bg-gradient-to-br from-green-50 to-yellow-50 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden cursor-pointer"
+        className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] bg-muted border-2 border-dashed border-border overflow-hidden cursor-pointer"
         onClick={handleMapClick}
-        style={{
-          backgroundImage: `
-            linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 25%, #f0fdf4 50%, #fefce8 75%, #fff7ed 100%)
-          `
-        }}
       >
         {/* Campus Buildings Layout - Responsive sizing */}
         <div className="absolute inset-0 p-2 sm:p-4 md:p-6">
           {/* Admin Block - Top Left */}
-          <div className="absolute top-2 sm:top-4 md:top-6 left-2 sm:left-4 md:left-6 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-xs sm:text-sm font-bold border border-yellow-300">
+          <div className="absolute top-2 sm:top-4 md:top-6 left-2 sm:left-4 md:left-6 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-card flex items-center justify-center text-xs sm:text-sm font-mono font-bold border border-border text-foreground">
             <div className="text-center">
               <div>ADMIN</div>
               <div>BLOCK</div>
@@ -142,7 +137,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </div>
 
           {/* IT Block - Top Right */}
-          <div className="absolute top-2 sm:top-4 md:top-6 right-2 sm:right-4 md:right-6 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-xs sm:text-sm font-bold border border-yellow-300">
+          <div className="absolute top-2 sm:top-4 md:top-6 right-2 sm:right-4 md:right-6 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-card flex items-center justify-center text-xs sm:text-sm font-mono font-bold border border-border text-foreground">
             <div className="text-center">
               <div>IT</div>
               <div>BLOCK</div>
@@ -150,7 +145,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </div>
 
           {/* Mae Block - Left Side */}
-          <div className="absolute top-1/2 left-2 sm:left-4 md:left-6 transform -translate-y-1/2 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-xs sm:text-sm font-bold border border-yellow-300">
+          <div className="absolute top-1/2 left-2 sm:left-4 md:left-6 transform -translate-y-1/2 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-card flex items-center justify-center text-xs sm:text-sm font-mono font-bold border border-border text-foreground">
             <div className="text-center">
               <div>MAE</div>
               <div>BLOCK</div>
@@ -158,7 +153,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </div>
 
           {/* ECE/CSE Block - Right Side */}
-          <div className="absolute top-1/2 right-2 sm:right-4 md:right-6 transform -translate-y-1/2 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-yellow-200 rounded shadow-sm flex items-center justify-center text-xs sm:text-sm font-bold border border-yellow-300">
+          <div className="absolute top-1/2 right-2 sm:right-4 md:right-6 transform -translate-y-1/2 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-card flex items-center justify-center text-xs sm:text-sm font-mono font-bold border border-border text-foreground">
             <div className="text-center">
               <div>ECE/CSE</div>
               <div>BLOCK</div>
@@ -166,24 +161,24 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </div>
 
           {/* Computer Centre Library - Top Center */}
-          <div className="absolute top-2 sm:top-4 md:top-6 left-1/2 transform -translate-x-1/2 w-24 sm:w-32 md:w-40 h-8 sm:h-12 md:h-16 bg-gray-300 rounded shadow-sm flex items-center justify-center text-xs sm:text-sm font-bold text-center">
+          <div className="absolute top-2 sm:top-4 md:top-6 left-1/2 transform -translate-x-1/2 w-24 sm:w-32 md:w-40 h-8 sm:h-12 md:h-16 bg-primary flex items-center justify-center text-xs sm:text-sm font-mono font-bold text-center text-primary-foreground">
             COMPUTER CENTRE-LIBRARY
           </div>
 
           {/* Central Main Ground - Much Larger */}
-          <div className="absolute top-16 sm:top-20 md:top-28 left-1/2 transform -translate-x-1/2 w-48 sm:w-60 md:w-72 h-32 sm:h-40 md:h-56 bg-green-200 rounded shadow-sm flex items-center justify-center text-sm sm:text-lg md:text-xl font-bold border border-green-300 z-10">
+          <div className="absolute top-16 sm:top-20 md:top-28 left-1/2 transform -translate-x-1/2 w-48 sm:w-60 md:w-72 h-32 sm:h-40 md:h-56 bg-status-resolved/15 flex items-center justify-center text-sm sm:text-lg md:text-xl font-mono font-bold border border-status-resolved/30 text-status-resolved z-10">
             <div className="text-center">
               <div>MAIN GROUND</div>
             </div>
           </div>
 
           {/* Auditorium - Bottom Center, overlapping with main ground */}
-          <div className="absolute bottom-12 sm:bottom-14 md:bottom-16 left-1/2 transform -translate-x-1/2 w-32 sm:w-40 md:w-52 h-16 sm:h-20 md:h-28 bg-purple-200 rounded shadow-sm flex items-center justify-center text-xs sm:text-base md:text-lg font-bold border border-purple-300 z-20">
+          <div className="absolute bottom-12 sm:bottom-14 md:bottom-16 left-1/2 transform -translate-x-1/2 w-32 sm:w-40 md:w-52 h-16 sm:h-20 md:h-28 bg-accent/15 flex items-center justify-center text-xs sm:text-base md:text-lg font-mono font-bold border border-accent/30 text-accent z-20">
             AUDITORIUM
           </div>
 
           {/* Kaveri Hostel - Bottom Left */}
-          <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 left-2 sm:left-4 md:left-6 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-blue-200 rounded shadow-sm flex items-center justify-center text-xs sm:text-sm font-bold border border-blue-300">
+          <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 left-2 sm:left-4 md:left-6 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-card flex items-center justify-center text-xs sm:text-sm font-mono font-bold border border-border text-foreground">
             <div className="text-center">
               <div>KAVERI</div>
               <div>HOSTEL</div>
@@ -191,7 +186,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </div>
 
           {/* Krishna Hostel - Bottom Right */}
-          <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 right-2 sm:right-4 md:right-6 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-blue-200 rounded shadow-sm flex items-center justify-center text-xs sm:text-sm font-bold border border-blue-300">
+          <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 right-2 sm:right-4 md:right-6 w-16 sm:w-24 md:w-32 h-12 sm:h-16 md:h-24 bg-card flex items-center justify-center text-xs sm:text-sm font-mono font-bold border border-border text-foreground">
             <div className="text-center">
               <div>KRISHNA</div>
               <div>HOSTEL</div>
@@ -215,8 +210,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 setSelectedPin(pin);
               }}
             >
-              <div className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full border-2 border-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform ${
-                pin.type === 'issue' ? 'bg-red-500' : 'bg-blue-500'
+              <div className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full border-2 border-card shadow-lg flex items-center justify-center hover:scale-110 transition-transform ${
+                pin.type === 'issue' ? 'bg-accent' : 'bg-primary'
               }`}>
                 <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
               </div>
@@ -227,14 +222,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
         {/* Click position indicator */}
         {isAddingPin && clickPosition && (
           <div
-            className="absolute transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-yellow-500 rounded-full border-2 border-white shadow-lg animate-pulse z-30"
+            className="absolute transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-status-pending rounded-full border-2 border-card shadow-lg animate-pulse z-30"
             style={{ left: `${clickPosition.x}%`, top: `${clickPosition.y}%` }}
           />
         )}
 
         {/* Instructions */}
-        <div className="absolute top-1 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full text-xs sm:text-sm text-gray-600 z-40 font-medium max-w-[90%] truncate">
-          {isAddingPin ? "📍 Click to place pin" : "🏫 IGDTUW Campus Map"}
+        <div className="absolute top-1 left-1/2 transform -translate-x-1/2 bg-card border border-border px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm text-muted-foreground z-40 font-mono uppercase tracking-wide max-w-[90%] truncate">
+          {isAddingPin ? "Click to place pin" : "IGDTUW Campus Map"}
         </div>
       </div>
 
@@ -259,8 +254,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
               </Button>
             </CardHeader>
             <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
-              <p className="text-sm text-gray-600 mb-3 sm:mb-4">{selectedPin.description}</p>
-              <div className="text-xs text-gray-500 mb-3 sm:mb-4">
+              <p className="text-sm text-muted-foreground mb-3 sm:mb-4">{selectedPin.description}</p>
+              <div className="text-xs text-muted-foreground font-mono mb-3 sm:mb-4">
                 Location: {selectedPin.lat.toFixed(4)}, {selectedPin.lng.toFixed(4)}
               </div>
               {selectedPin.type === 'custom' && (
