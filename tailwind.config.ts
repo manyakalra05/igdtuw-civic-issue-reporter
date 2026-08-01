@@ -29,6 +29,12 @@ export default {
 					progress: 'hsl(var(--status-progress))',
 					pending: 'hsl(var(--status-pending))',
 					review: 'hsl(var(--status-review))',
+					assigned: 'hsl(var(--status-assigned))',
+				},
+				priority: {
+					low: 'hsl(var(--priority-low))',
+					medium: 'hsl(var(--priority-medium))',
+					high: 'hsl(var(--priority-high))',
 				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

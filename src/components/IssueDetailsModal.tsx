@@ -46,6 +46,7 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
       ]);
       
       console.log('Loaded responses:', responsesData);
+      console.log('Loaded status history:', historyData);
       setResponses(responsesData);
       setStatusHistory(historyData);
     } catch (error) {
@@ -133,15 +134,18 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
   const statusColors = {
     "Reported": `bg-status-pending/15 text-status-pending border-status-pending/30 ${badgeBase}`,
     "Under Review": `bg-status-review/15 text-status-review border-status-review/30 ${badgeBase}`,
-    "Assigned": `bg-primary/10 text-primary border-primary/30 ${badgeBase}`,
+    "Assigned": `bg-status-assigned/15 text-status-assigned border-status-assigned/30 ${badgeBase}`,
     "In Progress": `bg-status-progress/15 text-status-progress border-status-progress/30 ${badgeBase}`,
     "Resolved": `bg-status-resolved/15 text-status-resolved border-status-resolved/30 ${badgeBase}`
   };
 
+  // Priority uses its own graduated intensity scale (calm -> urgent) —
+  // a different hue family from status colors, so it never collides
+  // visually with the status badge on the same card.
   const priorityColors = {
-    "Low": `bg-secondary text-secondary-foreground border-border ${badgeBase}`,
-    "Medium": `bg-status-pending/15 text-status-pending border-status-pending/30 ${badgeBase}`,
-    "High": `bg-status-progress/15 text-status-progress border-status-progress/30 ${badgeBase}`,
+    "Low": `bg-priority-low/10 text-priority-low border-priority-low/30 ${badgeBase}`,
+    "Medium": `bg-priority-medium/15 text-priority-medium border-priority-medium/30 ${badgeBase}`,
+    "High": `bg-priority-high/15 text-priority-high border-priority-high/30 ${badgeBase}`,
     "Critical": `bg-destructive/15 text-destructive border-destructive/30 ${badgeBase}`
   };
 
@@ -156,11 +160,11 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
               <DialogTitle className="text-xl font-display font-semibold mb-2">{issue.title}</DialogTitle>
               <DialogDescription className="text-base">{issue.description}</DialogDescription>
             </div>
-            <div className="flex flex-col gap-2 ml-4">
-              <Badge className={statusColors[issue.status as keyof typeof statusColors] || fallbackBadge}>
+            <div className="flex flex-col gap-2 ml-4 mt-1 pr-6">
+              <Badge variant="outline" className={statusColors[issue.status as keyof typeof statusColors] || fallbackBadge}>
                 {issue.status}
               </Badge>
-              <Badge className={priorityColors[issue.priority as keyof typeof priorityColors] || fallbackBadge}>
+              <Badge variant="outline" className={priorityColors[issue.priority as keyof typeof priorityColors] || fallbackBadge}>
                 {issue.priority}
               </Badge>
               {issue.image_url && (
@@ -247,7 +251,7 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
           <div className="flex border-b border-border">
             <button
               onClick={() => setActiveTab("responses")}
-              className={`flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide transition-colors border-b-2 -mb-px ${
+              className={`flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide transition-colors border-b-2 -mb-px outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
                 activeTab === "responses"
                   ? "border-accent text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground"
@@ -258,7 +262,7 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
             </button>
             <button
               onClick={() => setActiveTab("history")}
-              className={`flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide transition-colors border-b-2 -mb-px ${
+              className={`flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide transition-colors border-b-2 -mb-px outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
                 activeTab === "history"
                   ? "border-accent text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground"
@@ -380,7 +384,7 @@ export const IssueDetailsModal = ({ issue, open, onOpenChange, isAdmin = false }
                                 <span className="text-muted-foreground">&rarr;</span>
                               </>
                             )}
-                            <Badge className={statusColors[history.new_status as keyof typeof statusColors] || fallbackBadge}>
+                            <Badge variant="outline" className={statusColors[history.new_status as keyof typeof statusColors] || fallbackBadge}>
                               {history.new_status}
                             </Badge>
                           </div>

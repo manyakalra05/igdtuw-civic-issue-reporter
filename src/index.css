@@ -46,9 +46,24 @@
 
     /* Signal Green — resolved / success status */
     --status-resolved: 148 33% 37%;
-    --status-progress: 21 90% 48%;
+    /* Info Blue — in progress: distinct from both the navy header and the
+       orange CTA/accent, so "click this" and "actively being worked on"
+       never share a color */
+    --status-progress: 220 75% 50%;
     --status-pending: 42 85% 46%;
-    --status-review: 221 47% 40%;
+    /* Muted teal — under review: previously reused the navy primary color,
+       which made it nearly identical to "Assigned" below */
+    --status-review: 195 45% 32%;
+    /* Plum — assigned: now has its own dedicated hue instead of reusing
+       bg-primary, which was indistinguishable from "Under Review" */
+    --status-assigned: 262 38% 42%;
+
+    /* Priority — a graduated intensity scale (calm -> urgent), deliberately
+       a different hue family from the status colors above so a status chip
+       and a priority chip never read as the same signal on one card. */
+    --priority-low: 210 12% 52%;
+    --priority-medium: 32 35% 40%;
+    --priority-high: 14 60% 40%;
 
     --sidebar-background: 221 47% 16%;
     --sidebar-foreground: 42 22% 92%;

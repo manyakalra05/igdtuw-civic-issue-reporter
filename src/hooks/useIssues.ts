@@ -209,8 +209,20 @@ export const useIssues = () => {
     }
   };
 
-  const updateIssueStatus = async (id: string, status: string) => {
+  // FIXED: updateIssueStatus now also writes a row into issue_status_history.
+  // Previously it only updated the issues.status column, so the "Status
+  // History" tab in the UI was querying a table that nothing ever wrote to.
+  const updateIssueStatus = async (id: string, status: string, changeReason?: string) => {
     try {
+      // Grab the current status first so we can record the transition
+      const { data: current, error: fetchError } = await supabase
+        .from('issues')
+        .select('status')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
       const { error } = await supabase
         .from('issues')
         .update({ 
@@ -221,6 +233,23 @@ export const useIssues = () => {
 
       if (error) {
         throw error;
+      }
+
+      const { error: historyError } = await supabase
+        .from('issue_status_history' as any)
+        .insert([{
+          issue_id: id,
+          old_status: current?.status ?? null,
+          new_status: status,
+          changed_by: user?.id ?? null,
+          change_reason: changeReason ?? null,
+        }]) as any;
+
+      if (historyError) {
+        // Don't fail the whole status update if history logging fails —
+        // but do surface it, since silent failure is exactly what caused
+        // the original bug.
+        console.error('Error recording status history:', historyError);
       }
 
       // Update local state

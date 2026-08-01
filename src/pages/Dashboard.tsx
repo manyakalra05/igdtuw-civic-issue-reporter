@@ -142,15 +142,18 @@ const Dashboard = () => {
   const statusColors = {
     "Reported": `bg-status-pending/15 text-status-pending border-status-pending/30 ${badgeBase}`,
     "Under Review": `bg-status-review/15 text-status-review border-status-review/30 ${badgeBase}`,
-    "Assigned": `bg-primary/10 text-primary border-primary/30 ${badgeBase}`,
+    "Assigned": `bg-status-assigned/15 text-status-assigned border-status-assigned/30 ${badgeBase}`,
     "In Progress": `bg-status-progress/15 text-status-progress border-status-progress/30 ${badgeBase}`,
     "Resolved": `bg-status-resolved/15 text-status-resolved border-status-resolved/30 ${badgeBase}`
   };
 
+  // Priority uses its own graduated intensity scale (calm -> urgent) —
+  // a different hue family from status colors, so it never collides
+  // visually with the status badge on the same card.
   const priorityColors = {
-    "Low": `bg-secondary text-secondary-foreground border-border ${badgeBase}`,
-    "Medium": `bg-status-pending/15 text-status-pending border-status-pending/30 ${badgeBase}`,
-    "High": `bg-status-progress/15 text-status-progress border-status-progress/30 ${badgeBase}`,
+    "Low": `bg-priority-low/10 text-priority-low border-priority-low/30 ${badgeBase}`,
+    "Medium": `bg-priority-medium/15 text-priority-medium border-priority-medium/30 ${badgeBase}`,
+    "High": `bg-priority-high/15 text-priority-high border-priority-high/30 ${badgeBase}`,
     "Critical": `bg-destructive/15 text-destructive border-destructive/30 ${badgeBase}`
   };
 
@@ -402,10 +405,10 @@ const Dashboard = () => {
                     <div className="flex flex-col space-y-3">
                       <h3 className="text-lg font-display font-semibold text-foreground leading-tight break-words">{issue.title}</h3>
                       <div className="flex flex-wrap gap-2">
-                        <Badge className={statusColors[issue.status as keyof typeof statusColors] || `bg-secondary text-secondary-foreground border-border ${badgeBase}`}>
+                        <Badge variant="outline" className={statusColors[issue.status as keyof typeof statusColors] || `bg-secondary text-secondary-foreground border-border ${badgeBase}`}>
                           {issue.status}
                         </Badge>
-                        <Badge className={priorityColors[issue.priority as keyof typeof priorityColors] || `bg-secondary text-secondary-foreground border-border ${badgeBase}`}>
+                        <Badge variant="outline" className={priorityColors[issue.priority as keyof typeof priorityColors] || `bg-secondary text-secondary-foreground border-border ${badgeBase}`}>
                           {issue.priority}
                         </Badge>
                         {issue.image_url && (
